@@ -3,733 +3,514 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>택시 호출 앱 이용 경험 조사</title>
-<meta name="description" content="모빌리티 플랫폼 이용 경험에 관한 학술 연구 설문">
+<title>택시 호출 앱 이용 경험 설문조사</title>
+<meta name="description" content="모빌리티 플랫폼 요금 안내에 대한 소비자 인식 연구">
 <style>
 :root{
-  --ink:#14181f;
-  --ink-2:#414a57;
-  --ink-3:#6d7783;
-  --paper:#ffffff;
-  --field:#f6f7f8;
-  --line:#e2e6ea;
-  --line-2:#cbd2d9;
-  --focus:#1b4dd8;
-  --stim:#f5c33b;      /* 자극(앱 화면) 안에서만 쓰는 색 */
-  --stim-ink:#1a1a17;
-  --warn:#b03030;
-  --radius:10px;
-  --wrap:min(38rem, 100% - 2.5rem);
+  --canvas:#f4f5f8; --card:#ffffff;
+  --ink:#12151b; --ink-2:#3f4653; --ink-3:#767f8c;
+  --line:#e6e9ee; --line-2:#cfd5de; --field:#f8f9fb;
+  --brand:#4338ca; --brand-2:#7c3aed; --brand-soft:#eef0fe;
+  --stim:#f7c948; --stim-ink:#1b1a13; --warn:#c02626; --r:14px;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{
-  margin:0; background-color:var(--paper); color:var(--ink);
+body{margin:0; background:var(--canvas); color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Malgun Gothic","맑은 고딕",system-ui,sans-serif;
-  font-size:16px; line-height:1.65; letter-spacing:-0.01em;
-  -webkit-font-smoothing:antialiased;
-}
-.wrap{width:var(--wrap); margin-inline:auto}
+  font-size:16px; line-height:1.65; letter-spacing:-0.011em; -webkit-font-smoothing:antialiased}
+.wrap{width:min(40rem, 100% - 1.75rem); margin-inline:auto}
 
-/* ── 진행 표시 ─────────────────────────── */
-#bar{position:sticky; top:0; z-index:20; background:rgba(255,255,255,.94); backdrop-filter:saturate(1.6) blur(8px); border-bottom:1px solid var(--line)}
-#bar .wrap{display:flex; align-items:center; gap:.9rem; height:52px}
-#track{flex:1; height:3px; background-color:var(--line); border-radius:2px; overflow:hidden}
-#fill{height:100%; width:0; background-color:var(--ink); transition:width .45s cubic-bezier(.2,.8,.2,1)}
-#pct{font-size:.74rem; color:var(--ink-3); font-variant-numeric:tabular-nums; letter-spacing:.02em; min-width:3.2em; text-align:right}
+#bar{position:sticky; top:0; z-index:20; background:rgba(244,245,248,.9); backdrop-filter:saturate(1.8) blur(10px)}
+#bar .wrap{display:flex; align-items:center; gap:.85rem; height:54px}
+#back{border:0; background:none; cursor:pointer; font:inherit; font-size:.82rem; color:var(--ink-3); padding:.3rem .1rem; white-space:nowrap}
+#back[hidden]{display:none}
+#track{flex:1; height:4px; background:#e2e5ec; border-radius:3px; overflow:hidden}
+#fill{height:100%; width:0; border-radius:3px; background:linear-gradient(90deg,var(--brand),var(--brand-2)); transition:width .5s cubic-bezier(.2,.8,.2,1)}
+#pct{font-size:.74rem; color:var(--ink-3); font-variant-numeric:tabular-nums; min-width:2.9em; text-align:right}
+#bar.hide{opacity:0; pointer-events:none}
 
-/* ── 본문 ──────────────────────────────── */
-main{padding:2.4rem 0 5rem}
-.eyebrow{
-  font-size:.7rem; font-weight:700; letter-spacing:.16em; color:var(--ink-3);
-  text-transform:uppercase; margin:0 0 .55rem;
-}
-h1{font-size:1.5rem; line-height:1.35; font-weight:700; margin:0 0 1.1rem; letter-spacing:-0.025em}
-h2{font-size:1.05rem; font-weight:700; margin:2.2rem 0 .8rem; letter-spacing:-0.02em}
-p{margin:0 0 1rem; color:var(--ink-2)}
+main{padding:.6rem 0 4rem}
+.card{background:var(--card); border-radius:var(--r); padding:1.9rem 1.6rem;
+  box-shadow:0 1px 2px rgba(18,21,27,.04), 0 10px 30px -22px rgba(18,21,27,.5);
+  animation:enter .42s cubic-bezier(.2,.8,.25,1) both}
+@keyframes enter{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
+
+.eyebrow{font-size:.7rem; font-weight:700; letter-spacing:.15em; color:var(--brand); margin:0 0 .5rem; text-transform:uppercase}
+h1{font-size:1.4rem; line-height:1.4; font-weight:800; margin:0 0 1.15rem; letter-spacing:-0.028em}
+h2{font-size:.95rem; font-weight:700; margin:2rem 0 .7rem; letter-spacing:-0.02em; color:var(--ink)}
+p{margin:0 0 .95rem; color:var(--ink-2)}
 p.lead{color:var(--ink)}
 .fine{font-size:.85rem; color:var(--ink-3)}
-hr{border:0; border-top:1px solid var(--line); margin:2rem 0}
+.rule{border:0; border-top:1px solid var(--line); margin:1.5rem 0}
 
-/* ── 문항 ──────────────────────────────── */
-.q{padding:1.35rem 0; border-top:1px solid var(--line)}
-.q:first-of-type{border-top:0}
-.q .stem{display:flex; gap:.7rem; margin-bottom:.85rem}
-.q .code{
-  display:none; flex:none; font-size:.68rem; font-weight:700; color:var(--ink-3);
-  letter-spacing:.06em; padding-top:.34rem; font-variant-numeric:tabular-nums;
-}
-body.review .q .code{display:block}
-.q .text{font-size:1rem; line-height:1.55; color:var(--ink)}
+.byline{margin:0 0 1.4rem; padding:.9rem 1rem; background:var(--brand-soft); border-radius:10px; font-size:.9rem; color:var(--ink); line-height:1.7}
+.byline span{display:block}
+.factlist{margin:0 0 1.3rem; padding:0; list-style:none; border-top:1px solid var(--line)}
+.factlist li{display:flex; gap:.9rem; padding:.7rem 0; border-bottom:1px solid var(--line); font-size:.92rem}
+.factlist b{flex:none; width:5.2rem; color:var(--ink-3); font-size:.86rem; font-weight:500}
+.factlist i{font-style:normal; color:var(--ink-2)}
+.agree{display:flex; gap:.7rem; align-items:flex-start; padding:.95rem 1rem; margin-top:.3rem;
+  border:1px solid var(--line-2); border-radius:10px; cursor:pointer; background:var(--field);
+  font-size:.95rem; color:var(--ink); transition:border-color .15s, background-color .15s}
+.agree.on{border-color:var(--brand); background:var(--brand-soft)}
+.agree input{margin:.32rem 0 0; accent-color:var(--brand); flex:none; width:1rem; height:1rem}
 
-/* 리커트 */
-.scale{display:grid; grid-template-columns:repeat(7,1fr); gap:.3rem}
-.scale label{
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.3rem;
-  padding:.6rem .1rem; border:1px solid var(--line); border-radius:var(--radius);
-  background-color:var(--field); cursor:pointer; font-size:.82rem; color:var(--ink-2);
-  font-variant-numeric:tabular-nums; transition:border-color .12s, background .12s, color .12s;
-  min-height:46px;
-}
+.q{padding:1.3rem 0; border-top:1px solid var(--line)}
+.q:first-of-type{border-top:0; padding-top:.4rem}
+.stem{display:flex; gap:.7rem; margin-bottom:.9rem}
+.code{display:none; flex:none; font-size:.66rem; font-weight:700; color:var(--brand); padding-top:.36rem; letter-spacing:.05em}
+body.review .code{display:block}
+.text{font-size:1rem; line-height:1.55; color:var(--ink)}
+
+.scale{display:grid; grid-template-columns:repeat(7,1fr); gap:.32rem}
+.scale label{display:flex; align-items:center; justify-content:center; min-height:48px; cursor:pointer;
+  border:1px solid var(--line); border-radius:10px; background-color:var(--field);
+  font-size:.9rem; color:var(--ink-2); font-variant-numeric:tabular-nums;
+  transition:background-color .15s, border-color .15s, transform .1s}
+.scale label:active{transform:scale(.96)}
 .scale input{position:absolute; opacity:0; width:0; height:0}
-.scale label:hover{border-color:var(--line-2)}
-.scale label.on{background-color:var(--ink); border-color:var(--ink); color:#fff; font-weight:700}
-.scale input:focus-visible + span, .scale label:focus-within{outline:2px solid var(--focus); outline-offset:2px}
-.anchors{display:flex; justify-content:space-between; margin-top:.45rem; font-size:.74rem; color:var(--ink-3)}
+.scale label:has(input:checked){background-color:var(--brand); border-color:var(--brand); font-weight:700}
+.scale label:has(input:checked) span{color:#fff}
+.scale label:focus-within{outline:2px solid var(--brand-2); outline-offset:2px}
+.anchors{display:flex; justify-content:space-between; margin-top:.5rem; font-size:.74rem; color:var(--ink-3)}
 
-/* 선택형 */
 .choices{display:flex; flex-direction:column; gap:.45rem}
-.choices label{
-  display:flex; align-items:flex-start; gap:.65rem; padding:.75rem .85rem;
-  border:1px solid var(--line); border-radius:var(--radius); background-color:var(--field);
-  cursor:pointer; font-size:.95rem; color:var(--ink-2); transition:border-color .12s, background .12s;
-}
-.choices label:hover{border-color:var(--line-2)}
-.choices label.on{background:#eef2fb; border-color:var(--focus); color:var(--ink); font-weight:600}
-.choices input{margin:.35rem 0 0; accent-color:var(--focus); flex:none}
+.choices label{display:flex; align-items:flex-start; gap:.65rem; padding:.8rem .9rem; cursor:pointer;
+  border:1px solid var(--line); border-radius:10px; background-color:var(--field);
+  font-size:.95rem; color:var(--ink-2); transition:background-color .15s, border-color .15s}
+.choices label:has(input:checked){background-color:var(--brand-soft); border-color:var(--brand); font-weight:600}
+.choices label:has(input:checked) span{color:var(--ink)}
+.choices label:focus-within{outline:2px solid var(--brand-2); outline-offset:2px}
+.choices input{margin:.36rem 0 0; accent-color:var(--brand); flex:none}
 
-/* 입력 */
-input[type=text], input[type=number], select{
-  width:100%; padding:.7rem .85rem; font:inherit; font-size:.95rem; color:var(--ink);
-  background-color:var(--field); border:1px solid var(--line); border-radius:var(--radius);
-}
-input:focus-visible, select:focus-visible, button:focus-visible{outline:2px solid var(--focus); outline-offset:2px}
+input[type=number], select, textarea{width:100%; padding:.75rem .9rem; font:inherit; font-size:.95rem;
+  color:var(--ink); background:var(--field); border:1px solid var(--line); border-radius:10px}
+textarea{min-height:5.5rem; resize:vertical; line-height:1.6}
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible{outline:2px solid var(--brand-2); outline-offset:2px}
 
-/* ── 버튼 ──────────────────────────────── */
-.actions{margin-top:2.4rem; display:flex; flex-direction:column; gap:.75rem}
-button.go{
-  width:100%; padding:.95rem 1rem; font:inherit; font-weight:700; font-size:1rem;
-  color:#fff; background-color:var(--ink); border:0; border-radius:var(--radius); cursor:pointer;
-  letter-spacing:-0.01em; transition:opacity .15s;
-}
-button.go:disabled{opacity:.32; cursor:not-allowed}
-button.go:not(:disabled):hover{opacity:.88}
-.hint{font-size:.82rem; color:var(--ink-3); text-align:center; min-height:1.2em}
+.actions{margin-top:2.2rem; display:flex; flex-direction:column; gap:.7rem}
+button.go{width:100%; padding:1rem; font:inherit; font-weight:700; font-size:1rem; color:#fff;
+  border:0; border-radius:12px; cursor:pointer; letter-spacing:-0.01em;
+  background:linear-gradient(92deg,var(--brand),var(--brand-2));
+  box-shadow:0 8px 20px -12px rgba(67,56,202,.9); transition:opacity .15s, transform .1s}
+button.go:active{transform:scale(.99)}
+button.go:disabled{background:#c9ccd4; box-shadow:none; cursor:not-allowed}
+button.ghost{width:100%; padding:.72rem 1rem; font:inherit; font-size:.88rem; font-weight:600; color:var(--ink-2);
+  background:var(--card); border:1px solid var(--line-2); border-radius:12px; cursor:pointer}
+button.ghost[hidden]{display:none}
+.hint{font-size:.83rem; color:var(--ink-3); text-align:center; min-height:1.2em}
 .hint.err{color:var(--warn); font-weight:600}
 
-/* ── 자극: 앱 화면 ─────────────────────── */
-.phone{
-  margin:1.6rem 0; border:1px solid var(--line-2); border-radius:20px; overflow:hidden;
-  background:#fff; box-shadow:0 1px 2px rgba(20,24,31,.05), 0 12px 32px -18px rgba(20,24,31,.4);
-}
-.phone .top{
-  display:flex; align-items:center; justify-content:space-between;
-  padding:.85rem 1.1rem; border-bottom:1px solid var(--line);
-}
-.phone .brand{font-weight:800; font-size:1rem; letter-spacing:-0.03em}
-.phone .brand span{color:var(--stim-ink); background-color:var(--stim); padding:.1rem .4rem; border-radius:5px; margin-right:.35rem}
-.phone .tag{font-size:.74rem; color:var(--ink-3); letter-spacing:.02em}
-.phone .body{padding:1.4rem 1.1rem 1.1rem}
+.rv{display:none}
+.rv.in{display:block; animation:rise .5s cubic-bezier(.2,.7,.3,1) both}
+@keyframes rise{from{opacity:0; transform:translateY(9px)} to{opacity:1; transform:none}}
+.script p{color:var(--ink); font-size:1rem; line-height:1.8}
+.phone{margin:1.5rem 0 .3rem; border:1px solid var(--line-2); border-radius:18px; overflow:hidden;
+  background:#fff; box-shadow:0 14px 34px -20px rgba(18,21,27,.55)}
+.phone .top{display:flex; align-items:center; justify-content:space-between; padding:.85rem 1.05rem; border-bottom:1px solid var(--line)}
+.brand{font-weight:800; font-size:1rem; letter-spacing:-0.03em}
+.brand em{font-style:normal; background:var(--stim); color:var(--stim-ink); padding:.12rem .42rem; border-radius:6px; margin-right:.3rem}
+.phone .tag{font-size:.74rem; color:var(--ink-3)}
+.phone .body{padding:1.35rem 1.05rem 1.05rem}
 .fareRow{display:flex; align-items:baseline; justify-content:space-between; gap:1rem}
 .fareLabel{font-size:.86rem; color:var(--ink-3)}
 .fare{font-size:2rem; font-weight:800; letter-spacing:-0.045em; font-variant-numeric:tabular-nums}
-.prev{margin-top:.3rem; font-size:.84rem; color:var(--ink-3); font-variant-numeric:tabular-nums}
-.notice{
-  margin-top:1.15rem; padding:.9rem 1rem; background-color:var(--field);
-  border:1px solid var(--line); border-left:3px solid var(--stim); border-radius:8px;
-  font-size:.92rem; line-height:1.6; color:var(--ink);
-}
-.callBtn{
-  margin-top:1.15rem; width:100%; padding:.9rem; text-align:center; font-weight:800;
-  background-color:var(--stim); color:var(--stim-ink); border-radius:10px; font-size:1rem; letter-spacing:-0.01em;
-}
+.prev{margin-top:.25rem; font-size:.84rem; color:var(--ink-3); font-variant-numeric:tabular-nums}
+.notice{margin-top:1.1rem; padding:.9rem 1rem; background:#fffaeb; border:1px solid #f5e3ad;
+  border-left:3px solid var(--stim); border-radius:9px; font-size:.93rem; line-height:1.6; color:var(--ink)}
+.callBtn{margin-top:1.1rem; padding:.9rem; text-align:center; font-weight:800; background:var(--stim); color:var(--stim-ink); border-radius:11px}
+.player{display:flex; align-items:center; gap:.7rem; margin-top:1.3rem}
+.pline{flex:1; height:3px; background:var(--line); border-radius:3px; overflow:hidden}
+.pline i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--brand),var(--brand-2)); transition:width .12s linear}
+.ptext{font-size:.76rem; color:var(--ink-3); white-space:nowrap}
 
-/* 순차 노출 */
-.rv{display:none}
-.rv.in{display:block; animation:rise .5s cubic-bezier(.2,.7,.3,1) both}
-@keyframes rise{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
-.player{display:flex; align-items:center; gap:.7rem; margin-top:1.4rem}
-.pline{flex:1; height:2px; background:var(--line); border-radius:2px; overflow:hidden}
-.pline i{display:block; height:100%; width:0; background:var(--ink-3); transition:width .12s linear}
-.ptext{font-size:.76rem; color:var(--ink-3); font-variant-numeric:tabular-nums; white-space:nowrap}
-button.ghost{
-  width:100%; padding:.7rem 1rem; font:inherit; font-size:.88rem; font-weight:600;
-  color:var(--ink-2); background-color:var(--paper); border:1px solid var(--line-2);
-  border-radius:var(--radius); cursor:pointer;
-}
-button.ghost[hidden]{display:none}
-footer{padding:2rem 0 3rem; text-align:center; font-size:.72rem; color:var(--line-2)}
-@media (prefers-reduced-motion:reduce){ .rv.in{animation:none} }
+.center{text-align:center; padding:2.4rem 0 1rem}
+.spin{width:34px; height:34px; margin:0 auto 1.2rem; border:3px solid var(--line); border-top-color:var(--brand); border-radius:50%; animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.done{width:46px; height:46px; margin:0 auto 1.2rem; border-radius:50%;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2)); display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.35rem}
 
-/* 시나리오 지문 */
-.script{font-size:1rem; line-height:1.8}
-.script p{color:var(--ink)}
-
-/* 검토 모드 */
-#rvToggle{
-  position:fixed; right:.9rem; bottom:.9rem; z-index:31; border:0; cursor:pointer;
-  background-color:var(--ink); color:#fff; border-radius:999px; padding:.55rem .9rem;
-  font:inherit; font-size:.76rem; font-weight:700; letter-spacing:-0.01em;
-  box-shadow:0 8px 24px -12px rgba(0,0,0,.6);
-}
-#review{
-  position:fixed; right:.9rem; bottom:3.6rem; z-index:30; background-color:var(--ink); color:#fff;
-  border-radius:12px; padding:.75rem .85rem; font-size:.78rem; line-height:1.5; width:14.5rem;
-  box-shadow:0 12px 32px -12px rgba(0,0,0,.6);
-}
+#rvToggle{position:fixed; right:.85rem; bottom:.85rem; z-index:31; border:0; cursor:pointer; background:var(--ink); color:#fff;
+  border-radius:999px; padding:.55rem .9rem; font:inherit; font-size:.75rem; font-weight:700; box-shadow:0 10px 26px -14px rgba(0,0,0,.8)}
+#review{position:fixed; right:.85rem; bottom:3.5rem; z-index:30; background:var(--ink); color:#fff; border-radius:12px;
+  padding:.75rem .85rem; width:14.5rem; font-size:.78rem; box-shadow:0 14px 34px -14px rgba(0,0,0,.8)}
 #review[hidden]{display:none}
-#review b{display:block; font-size:.66rem; letter-spacing:.12em; opacity:.55; margin-bottom:.45rem}
-#review select{background:#222a35; color:#fff; border-color:#39424f; padding:.42rem .5rem; font-size:.8rem; margin-bottom:.4rem}
-#review button{width:100%; font:inherit; font-size:.78rem; font-weight:600; padding:.45rem; border:0; border-radius:7px; background:#39424f; color:#fff; cursor:pointer}
+#review b{display:block; font-size:.65rem; letter-spacing:.12em; opacity:.55; margin-bottom:.45rem}
+#review select{background:#232a36; color:#fff; border-color:#39424f; padding:.42rem .5rem; font-size:.8rem; margin-bottom:.4rem}
+#review button{width:100%; font:inherit; font-size:.78rem; font-weight:600; padding:.45rem; border:0; border-radius:8px; background:#39424f; color:#fff; cursor:pointer}
 body.review main{padding-bottom:7rem}
 
-.card{background-color:var(--field); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.2rem; margin:1.2rem 0}
-.card p:last-child{margin-bottom:0}
-code.out{display:block; white-space:pre-wrap; word-break:break-all; font-size:.72rem; line-height:1.5;
-  background:#0f141b; color:#c9d4e0; padding:.9rem; border-radius:8px; max-height:14rem; overflow:auto}
-
-@media (max-width:24rem){
-  .scale{gap:.2rem}
-  .scale label{font-size:.76rem; padding:.55rem .05rem}
-}
-@media (prefers-reduced-motion:reduce){
-  *{transition:none !important}
-}
+footer{padding:1.6rem 0 3rem; text-align:center; font-size:.72rem; color:var(--line-2)}
+@media (max-width:23.5rem){ .card{padding:1.5rem 1.15rem} .scale{gap:.22rem} .scale label{font-size:.82rem} }
+@media (prefers-reduced-motion:reduce){ *{animation-duration:.01ms !important; transition-duration:.01ms !important} }
 </style>
 </head>
 <body>
 
-<div id="bar"><div class="wrap">
+<div id="bar" class="hide"><div class="wrap">
+  <button id="back" type="button" hidden>← 이전</button>
   <div id="track"><div id="fill"></div></div>
   <div id="pct">0%</div>
 </div></div>
 
-<main><div class="wrap" id="app"></div></main>
+<main><div class="wrap"><div id="app"></div></div></main>
 <footer>국민대학교 비즈니스IT전문대학원</footer>
 
 <script>
 "use strict";
 
-/* ─────────────────────────────────────────────
-   0. 설정
-   ───────────────────────────────────────────── */
+/* ═══ 설정: 응답 수신 주소를 여기에 넣으세요 ═══ */
 const CONFIG = {
-  // 응답을 받을 주소. Google Apps Script 웹앱 URL 등을 넣으면 자동 전송됩니다.
-  // 비워 두면 마지막 화면에서 JSON 파일로 내려받습니다.
-  ENDPOINT: "",
-  MIN_DWELL_MS: 15000,   // 시나리오 최소 열람 시간
+  ENDPOINT: "",                       // Google Apps Script 웹앱 URL (README 3번)
+  RESEARCH_EMAIL: "b831028@naver.com",
+  FEEDBACK: true,                     // 설문 참여 소감(파일럿용). 본조사에서는 false
   FARE_NOW: "3,600원",
   FARE_BEFORE: "3,000원"
 };
 
-/* ─────────────────────────────────────────────
-   1. 조건 배정
-   ───────────────────────────────────────────── */
-const AGENTS = {
-  ai:    { key:"ai",    label:"AI 요금 알고리즘",      short:"AI 요금 알고리즘" },
-  human: { key:"human", label:"바로콜 요금정책 담당자", short:"바로콜 요금정책 담당자" }
-};
-const BASES = {
-  market: { key:"market", phrase:"현재 지역의 호출 수요와 배차 가능 차량 수" },
-  data:   { key:"data",   phrase:"고객님의 최근 이용 빈도, 주 이용 시간대, 호출 옵션 선택 이력" }
-};
-
+const AGENTS = { ai:{label:"AI 요금 알고리즘"}, human:{label:"바로콜 요금정책 담당자"} };
+const BASES = { market:{phrase:"현재 지역의 호출 수요와 배차 가능 차량 수"},
+                data:{phrase:"고객님의 최근 이용 빈도, 주 이용 시간대, 호출 옵션 선택 이력"} };
 const params = new URLSearchParams(location.search);
-const REVIEW = params.get("review") === "1";
-if(REVIEW) document.documentElement.addEventListener("DOMContentLoaded",()=>{});
-
-function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
-let COND = {
-  agent: params.get("agent") || pick(["ai","human"]),
-  basis: params.get("basis") || pick(["market","data"])
+const REVIEW = params.get("review")==="1";
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const COND = {
+  agent: AGENTS[params.get("agent")] ? params.get("agent") : pick(["ai","human"]),
+  basis: BASES[params.get("basis")] ? params.get("basis") : pick(["market","data"])
 };
-if(!AGENTS[COND.agent]) COND.agent = "ai";
-if(!BASES[COND.basis]) COND.basis = "market";
+const A = () => AGENTS[COND.agent], B = () => BASES[COND.basis];
+function josa(w,a,b){ const c=w.charCodeAt(w.length-1);
+  const has=(c>=0xAC00&&c<=0xD7A3)?((c-0xAC00)%28!==0):true; return has?a:b; }
+const noticeText = () => { const who=A().label, what=B().phrase;
+  return `${who}${josa(who,"이","가")} ${what}${josa(what,"을","를")} 바탕으로 호출 이용료를 결정했습니다.`; };
 
-const A = () => AGENTS[COND.agent];
-const B = () => BASES[COND.basis];
-// 받침 유무에 따라 조사를 선택 (담당자"가" / 알고리즘"이")
-function josa(word, withBatchim, withoutBatchim){
-  const c = word.charCodeAt(word.length-1);
-  const has = (c>=0xAC00 && c<=0xD7A3) ? ((c-0xAC00)%28 !== 0) : true;
-  return has ? withBatchim : withoutBatchim;
+const lk = (code,text) => ({code,text});
+const G = {
+  DF:[lk("DF1","오늘 제시된 호출 이용료는 공정하다."),
+      lk("DF2","오늘 제시된 호출 이용료는 합리적이다."),
+      lk("DF3","오늘 제시된 호출 이용료는 적정하다.")],
+  PF:[lk("PF1","이 호출 이용료가 정해진 과정은 공정하다."),
+      lk("PF2","이 호출 이용료를 정한 방식은 타당하다."),
+      lk("PF3","바로콜이 이 호출 이용료를 정한 절차는 적절하다.")],
+  AC:[lk("AC1","나는 이 호출 이용료를 지불하고 우선배차로 택시를 부를 의향이 있다."),
+      lk("AC2","이 조건이라면 나는 호출하기 버튼을 누를 가능성이 높다."),
+      lk("AC3","나는 이 호출 이용료를 지불할 만하다고 생각한다.")],
+  SI:[lk("SI1","이 요금을 결정할 때 자기 이익을 우선하려는 의도가 있었다."),
+      lk("SI2","이 요금을 결정할 때 욕심을 부렸다."),
+      lk("SI3","이 요금 결정에는 나쁜 의도가 있었다.")],
+  JD:[lk("JD1","이 요금이 정해지는 과정에서 나는 평가받고 있다는 느낌을 받았다."),
+      lk("JD2","이 요금에는 나에 대한 평가나 판단이 반영된 것처럼 느껴졌다."),
+      lk("JD3","이 요금을 결정한 쪽이 나를 판단한 것처럼 느껴졌다.")],
+  UN:[lk("UN1","이 요금을 정할 때 나의 개별적인 사정이 충분히 고려되지 않았다."),
+      lk("UN2","이 요금 결정 방식은 나에게만 해당되는 구체적인 사정을 충분히 고려하지 못했다."),
+      lk("UN3","이 요금은 나의 이용 기록만으로는 알 수 없는 개인적인 상황을 충분히 반영하지 못했다.")],
+  EX:[lk("EX1","이 요금 결정은 나에게서 더 많은 이익을 얻어내려는 것으로 느껴진다."),
+      lk("EX2","이 요금 결정은 이용자를 이용하려는 성격이 있다고 느껴진다."),
+      lk("EX3","이 요금 결정은 이용자에게 불리하게 설계되어 있다고 느껴진다.")],
+  PR:[lk("PR1","바로콜이 나에 관한 정보를 어떻게 수집하고 있는지 걱정된다."),
+      lk("PR2","바로콜이 내 정보를 어떤 목적으로 사용하는지 우려된다."),
+      lk("PR3","내 정보가 어떻게 활용되는지 내가 통제하기 어렵다고 느낀다.")],
+  SR:[lk("SR1","이 요금은 나의 개인적인 특성이나 행동을 반영하여 정해진 것처럼 느껴졌다."),
+      lk("SR2","이 요금은 나에 관한 정보에 근거해 정해진 것으로 보인다."),
+      lk("SR3","이 요금은 나와는 무관한 외부 상황 때문에 정해진 것으로 보인다.")],
+  RE:[lk("RE1","앞에서 읽은 상황은 실제로 일어날 법하다."),
+      lk("RE2","앞에서 읽은 상황은 현실적이다."),
+      lk("RE3","앞에서 읽은 상황에 몰입할 수 있었다.")],
+  AN:[lk("AN1","이 요금을 결정한 AI 요금 알고리즘은 사람과 비슷한 면이 있다."),
+      lk("AN2","이 요금을 결정한 AI 요금 알고리즘은 스스로 생각하는 것처럼 느껴진다.")],
+  GP:[lk("GP1","평소 온라인 서비스가 내 개인정보를 수집하는 것에 대해 걱정하는 편이다."),
+      lk("GP2","앱을 설치할 때 개인정보 관련 항목을 꼼꼼히 확인하는 편이다."),
+      lk("GP3","기업이 내 정보를 어떻게 사용하는지에 대해 민감한 편이다.")]
+};
+
+const R = { meta:{ startedAt:new Date().toISOString(), agent:COND.agent, basis:COND.basis,
+                   ua:navigator.userAgent, review:REVIEW }, answers:{}, timing:{} };
+let step = 0, enteredAt = Date.now();
+const shuffle = a => { const b=a.slice(); for(let i=b.length-1;i>0;i--){const j=(Math.random()*(i+1))|0; [b[i],b[j]]=[b[j],b[i]];} return b; };
+const MED = shuffle(["SI","JD","UN"]);
+R.meta.mediatorOrder = MED;
+
+/* ═══ 렌더 도우미 ═══ */
+function one(code,text,lo,hi){
+  lo=lo||"전혀 그렇지 않다"; hi=hi||"매우 그렇다";
+  const cur=R.answers[code];
+  const cells=[1,2,3,4,5,6,7].map(n=>`<label data-code="${code}" data-val="${n}">
+    <input type="radio" name="${code}" value="${n}"${cur==n?" checked":""}><span>${n}</span></label>`).join("");
+  return `<div class="q" data-req="${code}"><div class="stem"><div class="code">${code}</div><div class="text">${text}</div></div>
+    <div class="scale" role="radiogroup" aria-label="${text}">${cells}</div>
+    <div class="anchors"><span>1. ${lo}</span><span>7. ${hi}</span></div></div>`;
 }
-const noticeText = () => {
-  const who = A().label;
-  const what = B().phrase;
-  return `${who}${josa(who,"이","가")} ${what}${josa(what,"을","를")} 바탕으로 호출 이용료를 결정했습니다.`;
-};
+const items = list => list.map(it=>one(it.code,it.text)).join("");
+function choices(code,text,opts){
+  const NUM=["①","②","③","④","⑤"], cur=R.answers[code];
+  const rows=opts.map(([v,l],i)=>`<label data-code="${code}" data-val="${v}">
+    <input type="radio" name="${code}" value="${v}"${cur===v?" checked":""}><span>${NUM[i]||""} ${l}</span></label>`).join("");
+  return `<div class="q" data-req="${code}"><div class="stem"><div class="code">${code}</div><div class="text">${text}</div></div>
+    <div class="choices">${rows}</div></div>`;
+}
+function sel(code,label,opts){
+  return `<div class="q"><div class="stem"><div class="code">${code}</div><div class="text">${label}</div></div>
+    <select id="in_${code}"><option value="">선택해 주세요</option>
+    ${opts.map(v=>`<option${R.answers[code]===v?" selected":""}>${v}</option>`).join("")}</select></div>`;
+}
 
-/* ─────────────────────────────────────────────
-   2. 문항
-   ───────────────────────────────────────────── */
-const L7 = { type:"likert", lo:"전혀 그렇지 않다", hi:"매우 그렇다" };
-const lk = (code, text) => ({ code, text, ...L7 });
+/* ═══ 화면 ═══ */
+const P = [];
 
-const G_DF = { id:"DF", items:[
-  lk("DF1","오늘 제시된 호출 이용료는 공정하다."),
-  lk("DF2","오늘 제시된 호출 이용료는 합리적이다."),
-  lk("DF3","오늘 제시된 호출 이용료는 적정하다.")
-]};
-const G_PF = { id:"PF", items:[
-  lk("PF1","이 호출 이용료가 정해진 과정은 공정하다."),
-  lk("PF2","이 호출 이용료를 정한 방식은 타당하다."),
-  lk("PF3","바로콜이 이 호출 이용료를 정한 절차는 적절하다.")
-]};
-const G_AC = { id:"AC", items:[
-  lk("AC1","나는 이 호출 이용료를 지불하고 우선배차로 택시를 부를 의향이 있다."),
-  lk("AC2","이 조건이라면 나는 호출하기 버튼을 누를 가능성이 높다."),
-  lk("AC3","나는 이 호출 이용료를 지불할 만하다고 생각한다.")
-]};
-const G_SI = { id:"SI", lead:()=>`이 호출 이용료를 결정한 <strong>${A().short}</strong>에 대해 어떻게 생각하시는지 응답해 주세요.`, items:[
-  lk("SI1","이 요금을 결정할 때 자기 이익을 우선하려는 의도가 있었다."),
-  lk("SI2","이 요금을 결정할 때 욕심을 부렸다."),
-  lk("SI3","이 요금 결정에는 나쁜 의도가 있었다.")
-]};
-const G_JD = { id:"JD", items:[
-  lk("JD1","이 요금이 정해지는 과정에서 나는 평가받고 있다는 느낌을 받았다."),
-  lk("JD2","이 요금에는 나에 대한 평가나 판단이 반영된 것처럼 느껴졌다."),
-  lk("JD3","이 요금을 결정한 쪽이 나를 판단한 것처럼 느껴졌다.")
-]};
-const G_UN = { id:"UN", items:[
-  lk("UN1","이 요금을 정할 때 나의 개별적인 사정이 충분히 고려되지 않았다."),
-  lk("UN2","이 요금 결정 방식은 나에게만 해당되는 구체적인 사정을 충분히 고려하지 못했다."),
-  lk("UN3","이 요금은 나의 이용 기록만으로는 알 수 없는 개인적인 상황을 충분히 반영하지 못했다.")
-]};
-const G_EX = { id:"EX", items:[
-  lk("EX1","이 요금 결정은 나에게서 더 많은 이익을 얻어내려는 것으로 느껴진다."),
-  lk("EX2","이 요금 결정은 이용자를 이용하려는 성격이 있다고 느껴진다."),
-  lk("EX3","이 요금 결정은 이용자에게 불리하게 설계되어 있다고 느껴진다.")
-]};
-const G_PR = { id:"PR", items:[
-  lk("PR1","바로콜이 나에 관한 정보를 어떻게 수집하고 있는지 걱정된다."),
-  lk("PR2","바로콜이 내 정보를 어떤 목적으로 사용하는지 우려된다."),
-  lk("PR3","내 정보가 어떻게 활용되는지 내가 통제하기 어렵다고 느낀다.")
-]};
-const G_SR = { id:"SR", items:[
-  lk("SR1","이 요금은 나의 개인적인 특성이나 행동을 반영하여 정해진 것처럼 느껴졌다."),
-  lk("SR2","이 요금은 나에 관한 정보에 근거해 정해진 것으로 보인다."),
-  { ...lk("SR3","이 요금은 나와는 무관한 외부 상황 때문에 정해진 것으로 보인다."), reverse:true }
-]};
-const G_RE = { id:"RE", items:[
-  lk("RE1","앞에서 읽은 상황은 실제로 일어날 법하다."),
-  lk("RE2","앞에서 읽은 상황은 현실적이다."),
-  lk("RE3","앞에서 읽은 상황에 몰입할 수 있었다.")
-]};
-const G_AN = { id:"AN", items:[
-  lk("AN1","이 요금을 결정한 AI 요금 알고리즘은 사람과 비슷한 면이 있다."),
-  lk("AN2","이 요금을 결정한 AI 요금 알고리즘은 스스로 생각하는 것처럼 느껴진다.")
-]};
-const G_GP = { id:"GP", items:[
-  lk("GP1","평소 온라인 서비스가 내 개인정보를 수집하는 것에 대해 걱정하는 편이다."),
-  lk("GP2","앱을 설치할 때 개인정보 관련 항목을 꼼꼼히 확인하는 편이다."),
-  lk("GP3","기업이 내 정보를 어떻게 사용하는지에 대해 민감한 편이다.")
-]};
-
-/* ─────────────────────────────────────────────
-   3. 상태
-   ───────────────────────────────────────────── */
-const R = {                       // 응답 저장소
-  meta:{
-    startedAt:new Date().toISOString(),
-    agent:COND.agent, basis:COND.basis,
-    ua:navigator.userAgent, review:REVIEW
-  },
-  answers:{}, timing:{}
-};
-let step = 0, pageEnteredAt = Date.now();
-
-function shuffle(a){ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; }
-function shuffled(group){ return { ...group, items:shuffle(group.items) }; }
-
-// 확증적 매개변수 3묶음: 묶음 순서와 묶음 내 문항 순서를 무작위화
-const MED_ORDER = shuffle(["SI","JD","UN"]);
-R.meta.mediatorOrder = MED_ORDER;
-const MED = { SI:G_SI, JD:G_JD, UN:G_UN };
-
-/* ─────────────────────────────────────────────
-   4. 화면 정의
-   ───────────────────────────────────────────── */
-const PAGES = [];
-
-/* B0 동의 */
-PAGES.push({ id:"B0", eyebrow:"안내", title:"택시 호출 앱 이용 경험 조사", render(){
-  return `
-  <p class="lead">안녕하세요. 본 조사는 모빌리티 플랫폼 이용 경험에 관한 학술 연구입니다.</p>
-  <p>조사는 약 7~8분이 소요되며, 정답이나 오답이 없습니다. 떠오르는 대로 솔직하게 응답해 주시면 됩니다.</p>
-  <p>조사 중에는 연구를 위해 구성한 모빌리티 서비스 이용 상황이 제시됩니다. 특정 기업의 실제 정책과는 무관하며, 자세한 내용은 조사가 끝난 뒤 안내해 드립니다.</p>
-  <p>응답은 익명으로 처리되고 연구 목적으로만 사용되며, 원하시면 언제든 중단하실 수 있습니다.</p>
-  ${choices("consent","위 내용을 확인하였으며 조사에 참여하는 데 동의하십니까?",[
-    ["yes","동의합니다"],["no","동의하지 않습니다"]
-  ])}`;
-}, next(){ return R.answers.consent === "no" ? "STOP_CONSENT" : null; }});
-
-/* B1 스크리닝 */
-PAGES.push({ id:"B1", eyebrow:"01 · 참여 자격", title:"먼저 두 가지만 여쭙겠습니다", render(){
-  return `
-  <div class="q"><div class="stem"><div class="code">S1</div><div class="text">귀하의 연령은 만으로 몇 세입니까?</div></div>
-    <input type="number" inputmode="numeric" min="14" max="99" id="in_S1" placeholder="예: 34" value="${R.answers.S1||''}">
+P.push({ id:"COVER", bare:true, cta:"설문 시작하기",
+  render:()=>`
+  <p class="eyebrow">참여 안내</p>
+  <h1>택시 호출 앱 이용 경험 설문조사</h1>
+  <div class="byline">
+    <span><b>국민대학교 비즈니스IT전문대학원</b> 박사과정 <b>이승현</b></span>
+    <span>지도교수 <b>안현철</b></span>
   </div>
-  ${choices("S2","최근 6개월 이내에 택시 호출 앱으로 택시를 부른 적이 있습니까?",[["yes","있다"],["no","없다"]])}`;
-}, validate(){
-  const v = document.getElementById("in_S1").value.trim();
-  if(!v) return "연령을 입력해 주세요.";
-  R.answers.S1 = Number(v);
-  if(!R.answers.S2) return "응답을 선택해 주세요.";
-  return null;
-}, next(){
-  if(R.answers.S2==="no" || R.answers.S1<20 || R.answers.S1>59) return "STOP_SCREEN";
-  return null;
-}});
+  <p class="lead">안녕하세요. 바쁘신 중에 시간을 내어 주셔서 감사합니다.</p>
+  <p>본 설문은 택시 호출 앱에서 요금 안내를 받았을 때 이용자가 그 요금을 어떻게 받아들이는지를 알아보기 위한 학술 연구입니다.</p>
+  <ul class="factlist">
+    <li><b>소요 시간</b><i>약 7~8분</i></li>
+    <li><b>구성</b><i>짧은 상황 안내를 확인하신 뒤 문항에 응답하시면 됩니다</i></li>
+    <li><b>응답 처리</b><i>통계적으로만 처리되며, 개인을 식별할 수 있는 정보는 수집하지 않습니다</i></li>
+    <li><b>안내</b><i>정답이나 오답이 없습니다. 떠오르는 대로 응답해 주세요</i></li>
+    <li><b>문의</b><i>${CONFIG.RESEARCH_EMAIL}</i></li>
+  </ul>
+  <p class="fine">설문 중에는 연구를 위해 구성한 서비스 이용 상황이 제시됩니다. 특정 기업의 실제 정책과는 무관하며, 자세한 내용은 설문이 끝난 뒤 안내해 드립니다. 참여는 자발적이며 언제든 중단하실 수 있습니다.</p>
+  <label class="agree" id="agreeBox">
+    <input type="checkbox" id="agree">
+    <span>위 내용을 확인하였으며, 설문 참여에 동의합니다.</span>
+  </label>`,
+  gate:()=>document.getElementById("agree").checked,
+  bind(){ const c=document.getElementById("agree"), box=document.getElementById("agreeBox");
+    c.addEventListener("change",()=>{ box.classList.toggle("on",c.checked); refreshGate(); }); },
+  before(){ R.answers.consent="yes"; }
+});
 
-/* B2 이용 실태 */
-PAGES.push({ id:"B2", eyebrow:"02 · 이용 실태", title:"평소 택시 호출 앱 이용에 대해 여쭙겠습니다", render(){
-  return `
-  ${choices("U1","최근 6개월 동안 택시 호출 앱을 얼마나 자주 이용하셨습니까?",[
-    ["1","거의 이용하지 않음"],["2","월 1회 미만"],["3","월 1~3회"],["4","주 1~2회"],["5","주 3회 이상"]
-  ])}
-  ${choices("U2","택시 호출 앱에서 빠른 배차를 위해 추가 이용료를 지불해 본 경험이 있습니까?",[
-    ["yes","있다"],["no","없다"],["dk","잘 모르겠다"]
-  ])}`;
-}});
+P.push({ id:"B1", eyebrow:"참여 자격", title:"먼저 두 가지만 여쭙겠습니다", render:()=>`
+  <div class="q"><div class="stem"><div class="code">S1</div><div class="text">귀하의 연령은 만으로 몇 세입니까?</div></div>
+    <input type="number" inputmode="numeric" min="14" max="99" id="in_S1" placeholder="예: 34" value="${R.answers.S1||""}"></div>
+  ${choices("S2","최근 6개월 이내에 택시 호출 앱으로 택시를 부른 적이 있습니까?",[["yes","있다"],["no","없다"]])}`,
+  validate(){ const v=document.getElementById("in_S1").value.trim();
+    if(!v) return "연령을 입력해 주세요."; R.answers.S1=Number(v);
+    if(!R.answers.S2) return "응답을 선택해 주세요."; return null; },
+  next(){ return (R.answers.S2==="no"||R.answers.S1<20||R.answers.S1>59) ? "SCREEN_OUT" : null; }
+});
 
-/* B3 시나리오 */
-PAGES.push({ id:"B3", eyebrow:"03 · 상황", title:"다음 상황을 실제로 겪는다고 상상하며 읽어 주세요",
-  sequence:true,
-  render(){
-  return `
-  <p class="fine">아래 내용이 한 문단씩 나타납니다. 마지막 화면까지 확인하시면 다음으로 넘어갈 수 있습니다.</p>
+P.push({ id:"B2", eyebrow:"이용 실태", title:"평소 이용 습관을 여쭙겠습니다", back:true, render:()=>
+  choices("U1","최근 6개월 동안 택시 호출 앱을 얼마나 자주 이용하셨습니까?",
+    [["1","거의 이용하지 않음"],["2","월 1회 미만"],["3","월 1~3회"],["4","주 1~2회"],["5","주 3회 이상"]])
+  + choices("U2","택시 호출 앱에서 빠른 배차를 위해 추가 이용료를 지불해 본 경험이 있습니까?",
+    [["yes","있다"],["no","없다"],["dk","잘 모르겠다"]]) });
+
+P.push({ id:"B3", eyebrow:"상황 안내", title:"다음 상황을 실제로 겪는다고 상상하며 읽어 주세요",
+  sequence:true, render:()=>`
+  <p class="fine">아래 내용이 한 문단씩 나타납니다. 마지막 화면까지 확인하셔야 다음으로 넘어갈 수 있습니다.</p>
   <div class="script">
     <p class="rv">귀하는 평소 <strong>바로콜</strong>이라는 택시 호출 앱을 이용하고 있습니다. 바로콜에는 일반 호출 외에 조금 더 빨리 배차받을 수 있는 <strong>우선배차</strong> 옵션이 있으며, 이 옵션을 선택하면 택시 요금과 별도로 호출 이용료가 부과됩니다.</p>
     <p class="rv">귀하는 그동안 우선배차를 이용할 때마다 호출 이용료로 <strong>${CONFIG.FARE_BEFORE}</strong>을 지불해 왔습니다.</p>
     <p class="rv">현재 바로콜은 우선배차 호출 이용료의 새로운 산정 방식을 시범 운영하고 있습니다.</p>
     <p class="rv">오늘 귀하는 평소와 같은 장소에서 평소와 같은 시간대에 우선배차로 택시를 부르려고 합니다. 앱을 열어 우선배차를 선택하자 다음과 같은 화면이 나타났습니다.</p>
   </div>
-  ${phone(noticeText())}
-  <div class="player"><div class="pline"><i id="pl"></i></div><div class="ptext" id="pt">보여 드리는 중</div></div>`;
-}});
-
-/* B4 가격 공정성 */
-PAGES.push({ id:"B4", eyebrow:"04 · 요금에 대한 생각", title:"앞에서 보신 호출 이용료에 대해 어떻게 느끼셨습니까?",
-  render(){ return block(G_DF) + block(G_PF); }});
-
-/* B5 수용의도 */
-PAGES.push({ id:"B5", eyebrow:"05 · 이용 의향", title:"이 조건에서 우선배차를 이용하시겠습니까?",
-  render(){
-  return block(shuffled(G_AC))
-  + choices("CH1","이 호출 이용료로 우선배차를 이용하시겠습니까?",[["yes","이용한다"],["no","이용하지 않는다"]])
-  + block({ id:"ALT", items:[lk("ALT1","이 상황이라면 우선배차 대신 일반 호출을 이용할 것이다.")] });
-}});
-
-/* B6 확증적 매개변수 */
-MED_ORDER.forEach((k,i)=>{
-  PAGES.push({ id:"B6_"+k, eyebrow:`06 · 느낌 ${i+1}/3`, title:"앞의 상황을 떠올리며 응답해 주세요",
-    render(){ return block(shuffled(MED[k])); }});
-});
-
-/* B7 보조·부차 */
-PAGES.push({ id:"B7", eyebrow:"07 · 추가 질문", title:"몇 가지만 더 여쭙겠습니다",
-  render(){ return block(shuffled(G_EX)) + `<h2>바로콜의 정보 활용에 대해</h2>` + block(shuffled(G_PR)); }});
-
-/* B8 조작점검 */
-PAGES.push({ id:"B8a", eyebrow:"08 · 내용 확인", title:"앞에서 보신 화면을 떠올려 주세요", render(){
-  return `
-  ${choices("MC1","호출 이용료를 결정한 주체는 누구였습니까?",[
-    ["ai","AI 요금 알고리즘"],["human","바로콜 요금정책 담당자"],["dk","기억나지 않는다"]
-  ])}
-  ${choices("MC2","호출 이용료는 무엇을 바탕으로 결정되었다고 했습니까?",[
-    ["market","현재 지역의 호출 수요와 배차 가능 차량 수"],
-    ["data","나의 이용 빈도, 이용 시간대, 호출 옵션 선택 이력"],
-    ["dk","기억나지 않는다"]
-  ])}
-  ${likertOne("MC3","오늘 제시된 호출 이용료는 평소 지불하던 이용료와 비교해 어떻습니까?","훨씬 유리하다","훨씬 불리하다")}`;
-}});
-
-PAGES.push({ id:"B8b", eyebrow:"08 · 내용 확인", title:"이 요금에 대해 어떻게 느끼셨습니까", render(){
-  let h = block(G_SR) + `<h2>상황에 대한 느낌</h2>` + block(G_RE);
-  if(COND.agent==="ai") h += `<h2>AI 요금 알고리즘에 대해</h2>` + block(G_AN);
-  h += `<h2>확인 문항</h2>` + likertOne("AT1","이 문항은 응답에 집중하고 계신지 확인하기 위한 것입니다. 4번을 선택해 주세요.","1","7");
-  return h;
-}});
-
-/* B9 통제·인구통계 */
-PAGES.push({ id:"B9a", eyebrow:"09 · 평소 생각", title:"평소 개인정보에 대해 어떻게 생각하십니까?",
-  render(){ return block(shuffled(G_GP)); }});
-
-PAGES.push({ id:"B9b", eyebrow:"09 · 응답자 정보", title:"마지막으로 기본 사항을 여쭙겠습니다", render(){
-  return `
-  ${choices("D1","성별",[["m","남성"],["f","여성"],["na","응답하지 않음"]])}
-  <div class="q"><div class="stem"><div class="code">D2</div><div class="text">거주 지역</div></div>
-    <select id="in_D2">
-      <option value="">선택해 주세요</option>
-      ${["서울","경기·인천","강원","대전·세종·충청","광주·전라","대구·경북","부산·울산·경남","제주"].map(v=>`<option ${R.answers.D2===v?"selected":""}>${v}</option>`).join("")}
-    </select>
-  </div>
-  <div class="q"><div class="stem"><div class="code">D3</div><div class="text">최종 학력</div></div>
-    <select id="in_D3">
-      <option value="">선택해 주세요</option>
-      ${["고등학교 졸업 이하","전문대 재학·졸업","대학교 재학·졸업","대학원 재학 이상"].map(v=>`<option ${R.answers.D3===v?"selected":""}>${v}</option>`).join("")}
-    </select>
-  </div>
-  <div class="q"><div class="stem"><div class="code">D4</div><div class="text">직업</div></div>
-    <select id="in_D4">
-      <option value="">선택해 주세요</option>
-      ${["학생","사무·관리직","전문직","서비스·판매직","생산·기술직","자영업","주부","무직·기타"].map(v=>`<option ${R.answers.D4===v?"selected":""}>${v}</option>`).join("")}
-    </select>
-  </div>`;
-}, validate(){
-  for(const k of ["D2","D3","D4"]){
-    const v = document.getElementById("in_"+k).value;
-    if(!v) return "모든 항목에 응답해 주세요.";
-    R.answers[k] = v;
-  }
-  if(!R.answers.D1) return "모든 항목에 응답해 주세요.";
-  return null;
-}, last:true});
-
-/* ─────────────────────────────────────────────
-   5. 렌더링 도우미
-   ───────────────────────────────────────────── */
-function phone(notice){
-  return `
-  <div class="phone rv" role="img" aria-label="바로콜 앱 우선배차 화면">
-    <div class="top"><div class="brand"><span>바로</span>콜</div><div class="tag">우선배차</div></div>
+  <div class="phone rv">
+    <div class="top"><div class="brand"><em>바로</em>콜</div><div class="tag">우선배차</div></div>
     <div class="body">
       <div class="fareRow"><div class="fareLabel">호출 이용료</div><div class="fare">${CONFIG.FARE_NOW}</div></div>
       <div class="prev">평소 이용료 ${CONFIG.FARE_BEFORE}</div>
-      <div class="notice rv">${notice}</div>
+      <div class="notice rv">${noticeText()}</div>
       <div class="callBtn">호출하기</div>
     </div>
-  </div>`;
+  </div>
+  <div class="player"><div class="pline"><i id="pl"></i></div><div class="ptext" id="pt">보여 드리는 중</div></div>` });
+
+P.push({ id:"B4", eyebrow:"요금에 대한 생각", title:"앞에서 보신 호출 이용료에 대해 어떻게 느끼셨습니까?",
+  render:()=> items(G.DF) + `<h2>요금이 정해진 과정에 대해</h2>` + items(G.PF) });
+
+P.push({ id:"B5", eyebrow:"이용 의향", title:"이 조건에서 우선배차를 이용하시겠습니까?", back:true,
+  render:()=> items(shuffle(G.AC))
+    + choices("CH1","이 호출 이용료로 우선배차를 이용하시겠습니까?",[["yes","이용한다"],["no","이용하지 않는다"]])
+    + items([lk("ALT1","이 상황이라면 우선배차 대신 일반 호출을 이용할 것이다.")]) });
+
+MED.forEach((k,i)=> P.push({ id:"B6_"+k, eyebrow:`느낌 ${i+1} / 3`, title:"앞의 상황을 떠올리며 응답해 주세요", back:true,
+  render:()=> (k==="SI" ? `<p class="lead">이 호출 이용료를 결정한 <strong>${A().label}</strong>에 대해 어떻게 생각하시는지 응답해 주세요.</p>` : "")
+    + items(shuffle(G[k])) }));
+
+P.push({ id:"B7", eyebrow:"추가 질문", title:"몇 가지만 더 여쭙겠습니다", back:true,
+  render:()=> items(shuffle(G.EX)) + `<h2>바로콜의 정보 활용에 대해</h2>` + items(shuffle(G.PR)) });
+
+P.push({ id:"B8a", eyebrow:"내용 확인", title:"앞에서 보신 화면을 떠올려 주세요", render:()=>
+  choices("MC1","호출 이용료를 결정한 주체는 누구였습니까?",
+    [["ai","AI 요금 알고리즘"],["human","바로콜 요금정책 담당자"],["dk","기억나지 않는다"]])
+  + choices("MC2","호출 이용료는 무엇을 바탕으로 결정되었다고 했습니까?",
+    [["market","현재 지역의 호출 수요와 배차 가능 차량 수"],
+     ["data","나의 이용 빈도, 이용 시간대, 호출 옵션 선택 이력"],["dk","기억나지 않는다"]])
+  + one("MC3","오늘 제시된 호출 이용료는 평소 지불하던 이용료와 비교해 어떻습니까?","훨씬 유리하다","훨씬 불리하다") });
+
+P.push({ id:"B8b", eyebrow:"내용 확인", title:"이 요금에 대해 어떻게 느끼셨습니까?", back:true, render(){
+  let h = items(G.SR) + `<h2>상황에 대한 느낌</h2>` + items(G.RE);
+  if(COND.agent==="ai") h += `<h2>AI 요금 알고리즘에 대해</h2>` + items(G.AN);
+  h += `<h2>확인 문항</h2>` + one("AT1","이 문항에는 정답이 없습니다. 아래 보기 중 4번을 선택해 주십시오.");
+  return h; }});
+
+P.push({ id:"B9a", eyebrow:"평소 생각", title:"평소 개인정보에 대해 어떻게 생각하십니까?", back:true,
+  render:()=> items(shuffle(G.GP)) });
+
+P.push({ id:"B9b", eyebrow:"응답자 정보", title:"마지막으로 기본 사항을 여쭙겠습니다", back:true, render:()=>`
+  ${choices("D1","성별",[["m","남성"],["f","여성"],["na","응답하지 않음"]])}
+  ${sel("D2","거주 지역",["서울","경기·인천","강원","대전·세종·충청","광주·전라","대구·경북","부산·울산·경남","제주"])}
+  ${sel("D3","최종 학력",["고등학교 졸업 이하","전문대 재학·졸업","대학교 재학·졸업","대학원 재학 이상"])}
+  ${sel("D4","직업",["학생","사무·관리직","전문직","서비스·판매직","생산·기술직","자영업","주부","무직·기타"])}`,
+  validate(){ for(const k of ["D2","D3","D4"]){ const v=document.getElementById("in_"+k).value;
+      if(!v) return "모든 항목에 응답해 주세요."; R.answers[k]=v; }
+    if(!R.answers.D1) return "모든 항목에 응답해 주세요."; return null; },
+  last: !CONFIG.FEEDBACK });
+
+if(CONFIG.FEEDBACK){
+  P.push({ id:"FB", eyebrow:"설문 참여 소감", title:"방금 응답하신 설문에 대한 의견을 여쭙겠습니다", back:true, last:true, render:()=>`
+    <p class="fine">설문을 다듬는 데 쓰이는 문항입니다. 편하게 응답해 주세요.</p>
+    ${choices("F1","설문 문항을 이해하는 데 어려움이 있었습니까?",
+      [["1","전혀 없었다"],["2","거의 없었다"],["3","보통이다"],["4","다소 있었다"],["5","매우 있었다"]])}
+    ${choices("F2","서로 의미 차이가 잘 구분되지 않는다고 느껴지는 문항이 있었습니까?",
+      [["1","전혀 없었다"],["2","거의 없었다"],["3","보통이다"],["4","다소 있었다"],["5","매우 있었다"]])}
+    ${choices("F3","상황 안내가 현실적으로 느껴졌습니까?",
+      [["1","전혀 아니다"],["2","별로 아니다"],["3","보통이다"],["4","대체로 그렇다"],["5","매우 그렇다"]])}
+    <div class="q"><div class="stem"><div class="code">F4</div><div class="text">의미가 모호하거나 이해하기 어려웠던 문항이 있었다면 자유롭게 적어 주세요.</div></div>
+      <textarea id="in_F4" placeholder="없으면 비워 두셔도 됩니다">${R.answers.F4||""}</textarea></div>
+    <div class="q"><div class="stem"><div class="code">F5</div><div class="text">이 설문이 무엇을 알아보려 한다고 생각하셨습니까?</div></div>
+      <textarea id="in_F5" placeholder="떠오르는 대로 적어 주세요">${R.answers.F5||""}</textarea></div>`,
+    validate(){ R.answers.F4=document.getElementById("in_F4").value.trim();
+      R.answers.F5=document.getElementById("in_F5").value.trim(); return null; } });
 }
 
-function block(group){
-  let h = "";
-  if(group.lead) h += `<p class="lead">${typeof group.lead==="function"?group.lead():group.lead}</p>`;
-  h += group.items.map(it => likertOne(it.code, it.text, it.lo, it.hi)).join("");
-  return h;
-}
+/* ═══ 진행 ═══ */
+const app=document.getElementById("app"), bar=document.getElementById("bar");
+const fill=document.getElementById("fill"), pctEl=document.getElementById("pct"), backBtn=document.getElementById("back");
 
-function likertOne(code, text, lo, hi){
-  lo = lo || L7.lo; hi = hi || L7.hi;
-  const cur = R.answers[code];
-  const cells = [1,2,3,4,5,6,7].map(n=>`
-    <label class="${cur==n?"on":""}" data-code="${code}" data-val="${n}">
-      <input type="radio" name="${code}" value="${n}" ${cur==n?"checked":""}>
-      <span>${n}</span>
-    </label>`).join("");
-  return `<div class="q" data-req="${code}">
-    <div class="stem"><div class="code">${code}</div><div class="text">${text}</div></div>
-    <div class="scale" role="radiogroup" aria-label="${code}">${cells}</div>
-    <div class="anchors"><span>${lo}</span><span>${hi}</span></div>
-  </div>`;
-}
-
-function choices(code, text, opts){
-  const cur = R.answers[code];
-  const NUM = ["①","②","③","④","⑤"];
-  const rows = opts.map(([v,l],i)=>`
-    <label class="${cur===v?"on":""}" data-code="${code}" data-val="${v}">
-      <input type="radio" name="${code}" value="${v}" ${cur===v?"checked":""}>
-      <span>${NUM[i]||""} ${l}</span>
-    </label>`).join("");
-  return `<div class="q" data-req="${code}">
-    <div class="stem"><div class="code">${code}</div><div class="text">${text}</div></div>
-    <div class="choices">${rows}</div>
-  </div>`;
-}
-
-/* ─────────────────────────────────────────────
-   6. 진행 엔진
-   ───────────────────────────────────────────── */
-const app = document.getElementById("app");
-const fill = document.getElementById("fill");
-const pctEl = document.getElementById("pct");
-
-function progress(){
-  const p = Math.round(step / PAGES.length * 100);
-  fill.style.width = p + "%"; pctEl.textContent = p + "%";
-}
+function refreshGate(){ const page=P[step], btn=document.getElementById("next");
+  if(page.gate && btn) btn.disabled = !page.gate(); }
 
 function draw(){
-  const page = PAGES[step];
-  pageEnteredAt = Date.now();
-  app.innerHTML = `
-    <p class="eyebrow">${page.eyebrow}</p>
-    <h1>${page.title}</h1>
+  const page=P[step]; enteredAt=Date.now();
+  bar.classList.toggle("hide", !!page.bare);
+  backBtn.hidden = !page.back;
+  app.innerHTML=`<div class="card">
+    ${page.bare?"":`<p class="eyebrow">${page.eyebrow}</p><h1>${page.title}</h1>`}
     ${page.render()}
     <div class="actions">
-      <button class="go" id="next" ${page.sequence?"disabled":""}>${page.last?"응답 마치기":"다음"}</button>
-      ${page.sequence?'<button class="ghost" id="replay" type="button" hidden>다시 보기</button>':''}
+      <button class="go" id="next"${page.sequence||page.gate?" disabled":""}>${page.last?"제출하기":(page.cta||"다음")}</button>
+      ${page.sequence?'<button class="ghost" id="replay" type="button" hidden>다시 보기</button>':""}
       <div class="hint" id="hint"></div>
-    </div>`;
-  window.scrollTo({top:0, behavior:"instant"});
-  progress();
-
-  if(page.sequence){
-    runSequence();
-    document.getElementById("replay").addEventListener("click", ()=>{
-      R.meta.replays = (R.meta.replays||0) + 1;
-      runSequence();
-    });
-  }
-  document.getElementById("next").addEventListener("click", advance);
+    </div></div>`;
+  window.scrollTo(0,0);
+  const p=Math.round(step/P.length*100); fill.style.width=p+"%"; pctEl.textContent=p+"%";
+  document.getElementById("next").addEventListener("click",advance);
+  if(page.bind) page.bind();
+  if(page.sequence){ runSequence();
+    document.getElementById("replay").addEventListener("click",()=>{
+      R.meta.replays=(R.meta.replays||0)+1; runSequence(); }); }
 }
 
-let seqTimers = [];
+let timers=[];
 function runSequence(){
-  seqTimers.forEach(clearTimeout); seqTimers = [];
-  const nodes = [...app.querySelectorAll(".rv")];
-  const btn = document.getElementById("next");
-  const replay = document.getElementById("replay");
-  const line = document.getElementById("pl");
-  const text = document.getElementById("pt");
-  const GAP = 2400, TAIL = 2800;
-  const total = (nodes.length - 1) * GAP + TAIL;
-
-  nodes.forEach(n => n.classList.remove("in"));
-  btn.disabled = true; if(replay) replay.hidden = true;
-  text.textContent = "보여 드리는 중";
-
-  nodes.forEach((n,i) => seqTimers.push(setTimeout(()=>{
-    n.classList.add("in");
-    if(i > 0){
-      const r = n.getBoundingClientRect();
-      if(r.bottom > window.innerHeight - 90) n.scrollIntoView({block:"end", behavior:"smooth"});
-    }
+  timers.forEach(clearTimeout); timers=[];
+  const nodes=[...app.querySelectorAll(".rv")];
+  const btn=document.getElementById("next"), replay=document.getElementById("replay");
+  const line=document.getElementById("pl"), text=document.getElementById("pt");
+  const GAP=2400, TAIL=2800, total=(nodes.length-1)*GAP+TAIL;
+  nodes.forEach(n=>n.classList.remove("in"));
+  btn.disabled=true; replay.hidden=true; text.textContent="보여 드리는 중";
+  nodes.forEach((n,i)=>timers.push(setTimeout(()=>{ n.classList.add("in");
+    if(i>0){ const r=n.getBoundingClientRect();
+      if(r.bottom>window.innerHeight-90) n.scrollIntoView({block:"end",behavior:"smooth"}); }
   }, i*GAP)));
-
-  const t0 = Date.now();
-  const tick = setInterval(()=>{
-    const el = Date.now() - t0;
-    line.style.width = Math.min(100, el/total*100) + "%";
-    if(el >= total){
-      clearInterval(tick);
-      line.style.width = "100%";
-      text.textContent = "확인 완료";
-      btn.disabled = false;
-      if(replay) replay.hidden = false;
-    }
-  }, 100);
-  seqTimers.push(tick);
+  const t0=Date.now();
+  const tick=setInterval(()=>{ const el=Date.now()-t0;
+    line.style.width=Math.min(100,el/total*100)+"%";
+    if(el>=total){ clearInterval(tick); line.style.width="100%";
+      text.textContent="확인 완료"; btn.disabled=false; replay.hidden=false; } },100);
+  timers.push(tick);
 }
 
-app.addEventListener("click", e=>{
-  const lab = e.target.closest("label[data-code]");
-  if(!lab) return;
-  const code = lab.dataset.code, val = lab.dataset.val;
-  R.answers[code] = isNaN(val) ? val : Number(val);
-  lab.parentElement.querySelectorAll("label").forEach(l=>l.classList.remove("on"));
-  lab.classList.add("on");
-  const h = document.getElementById("hint"); if(h){ h.textContent=""; h.classList.remove("err"); }
+app.addEventListener("click",e=>{
+  const lab=e.target.closest("label[data-code]"); if(!lab) return;
+  R.answers[lab.dataset.code]=isNaN(lab.dataset.val)?lab.dataset.val:Number(lab.dataset.val);
+  const h=document.getElementById("hint"); if(h){h.textContent=""; h.classList.remove("err");}
 });
 
+backBtn.addEventListener("click",()=>{ if(step>0){ step--; draw(); } });
+
 function advance(){
-  const page = PAGES[step];
-  const hint = document.getElementById("hint");
-  const fail = (m)=>{ hint.textContent = m; hint.classList.add("err"); };
-
-  if(page.validate){
-    const msg = page.validate();
-    if(msg) return fail(msg);
-  }
-  const missing = [...app.querySelectorAll("[data-req]")].filter(q => R.answers[q.dataset.req] === undefined);
-  if(missing.length){
-    missing[0].scrollIntoView({block:"center", behavior:"smooth"});
-    return fail(`응답하지 않은 문항이 ${missing.length}개 있습니다.`);
-  }
-
-  R.timing[page.id] = Date.now() - pageEnteredAt;
-
-  const jump = page.next && page.next();
-  if(jump === "STOP_CONSENT") return end("동의하지 않으셨습니다", "조사를 종료합니다. 참여를 고려해 주셔서 감사합니다.", false);
-  if(jump === "STOP_SCREEN")  return end("조사 대상에 해당하지 않습니다", "이번 조사는 최근 6개월 이내에 택시 호출 앱을 이용하신 만 20~59세 성인을 대상으로 합니다. 참여해 주셔서 감사합니다.", false);
-
-  if(page.last) return finish();
+  const page=P[step], hint=document.getElementById("hint");
+  const fail=m=>{ hint.textContent=m; hint.classList.add("err"); };
+  if(page.validate){ const m=page.validate(); if(m) return fail(m); }
+  const miss=[...app.querySelectorAll("[data-req]")].filter(q=>R.answers[q.dataset.req]===undefined);
+  if(miss.length){ miss[0].scrollIntoView({block:"center",behavior:"smooth"});
+    return fail(`아직 응답하지 않은 문항이 ${miss.length}개 있습니다.`); }
+  R.timing[page.id]=(R.timing[page.id]||0)+(Date.now()-enteredAt);
+  if(page.before) page.before();
+  if(page.next && page.next()==="SCREEN_OUT") return screenOut();
+  if(page.last) return submit();
   step++; draw();
 }
 
-/* ─────────────────────────────────────────────
-   7. 종료
-   ───────────────────────────────────────────── */
-function end(title, body, done){
-  fill.style.width = "100%"; pctEl.textContent = "100%";
-  app.innerHTML = `<p class="eyebrow">종료</p><h1>${title}</h1><p class="lead">${body}</p>`;
-  window.onbeforeunload = null;
-  window.scrollTo({top:0});
-}
+/* ═══ 종료 ═══ */
+function shell(html){ bar.classList.add("hide"); window.onbeforeunload=null;
+  app.innerHTML=`<div class="card">${html}</div>`; window.scrollTo(0,0); }
 
-function finish(){
-  R.meta.finishedAt = new Date().toISOString();
-  R.meta.durationSec = Math.round((Date.parse(R.meta.finishedAt) - Date.parse(R.meta.startedAt))/1000);
-  const payload = JSON.stringify(R);
+function screenOut(){ shell(`<div class="center"><h1>참여해 주셔서 감사합니다</h1>
+  <p class="fine">이번 조사는 최근 6개월 이내에 택시 호출 앱을 이용하신 만 20~59세 성인을 대상으로 합니다.</p></div>`); }
 
-  let sent = false;
+function submit(){
+  R.meta.finishedAt=new Date().toISOString();
+  R.meta.durationSec=Math.round((Date.parse(R.meta.finishedAt)-Date.parse(R.meta.startedAt))/1000);
+  fill.style.width="100%"; pctEl.textContent="100%";
+  shell(`<div class="center"><div class="spin"></div>
+    <p class="lead" style="font-weight:700">응답을 제출하고 있습니다</p>
+    <p class="fine">완료될 때까지 이 창을 닫지 말아 주세요.</p></div>`);
+  const payload=JSON.stringify(R);
+  if(REVIEW) window.__payload=payload;
+  const finish=()=>setTimeout(thanks,900);
   if(CONFIG.ENDPOINT){
-    try{
-      fetch(CONFIG.ENDPOINT, {method:"POST", mode:"no-cors", headers:{"Content-Type":"text/plain"}, body:payload});
-      sent = true;
-    }catch(e){ sent = false; }
-  }
-
-  fill.style.width = "100%"; pctEl.textContent = "100%";
-  window.onbeforeunload = null;
-  app.innerHTML = `
-    <p class="eyebrow">종료</p>
-    <h1>조사에 참여해 주셔서 감사합니다</h1>
-    <div class="card">
-      <p><strong>안내드립니다.</strong> 본 조사에서 제시된 “바로콜”은 연구를 위해 만들어진 가상의 앱이며 실제로 존재하지 않습니다. 화면에 제시된 호출 이용료와 요금 산정 방식 역시 연구용으로 구성한 가상의 상황으로, 실제 택시 호출 서비스가 이러한 방식으로 요금을 정하고 있다는 뜻이 아닙니다.</p>
-      <p>이 연구는 요금이 인상되었다는 안내를 받았을 때, 그 요금을 <strong>누가</strong> 정했는지와 <strong>무엇을 바탕으로</strong> 정했는지에 따라 소비자가 요금을 어떻게 받아들이는지를 알아보기 위한 것입니다. 참가자마다 조금씩 다른 안내 문구를 보셨습니다.</p>
-      <p class="fine">문의: 국민대학교 비즈니스IT전문대학원 이승현</p>
-    </div>
-    ${sent ? `<p class="fine">응답이 정상적으로 저장되었습니다.</p>`
-           : `<h2>응답 저장</h2>
-              <p class="fine">아래 버튼을 눌러 응답 파일을 저장한 뒤 연구자에게 전달해 주세요. 조사 도구를 정식 운영할 때는 서버로 자동 전송되도록 설정합니다.</p>
-              <div class="actions"><button class="go" id="dl">응답 파일 내려받기</button></div>
-              <h2 class="fine" style="margin-top:2rem">응답 내용</h2>
-              <code class="out">${payload.replace(/[<>&]/g, c=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[c]))}</code>`}
-  `;
-  const dl = document.getElementById("dl");
-  if(dl) dl.addEventListener("click", ()=>{
-    const blob = new Blob([payload], {type:"application/json"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `barocall_${COND.agent}_${COND.basis}_${Date.now()}.json`;
-    a.click();
-  });
-  window.scrollTo({top:0});
+    fetch(CONFIG.ENDPOINT,{method:"POST",mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},body:payload}).then(finish).catch(finish);
+  } else finish();
 }
 
-/* ─────────────────────────────────────────────
-   8. 검토 모드
-   ───────────────────────────────────────────── */
+function thanks(){
+  shell(`<div class="center"><div class="done">✓</div>
+      <h1 style="margin-bottom:.6rem">설문에 참여해 주셔서 감사합니다</h1>
+      <p class="fine">귀하의 응답은 소중한 연구 자료로 활용됩니다.</p></div>
+    <hr class="rule">
+    <h2 style="margin-top:0">연구 안내</h2>
+    <p>본 설문에서 제시된 <strong>바로콜</strong>은 연구를 위해 만든 가상의 앱이며 실제로 존재하지 않습니다. 화면에 제시된 호출 이용료와 요금 산정 방식 역시 연구용으로 구성한 가상의 상황으로, 실제 택시 호출 서비스가 이러한 방식으로 요금을 정하고 있다는 뜻이 아닙니다.</p>
+    <p>이 연구는 요금이 인상되었다는 안내를 받았을 때, 그 요금을 <strong>누가</strong> 정했는지와 <strong>무엇을 바탕으로</strong> 정했는지에 따라 이용자가 요금을 어떻게 받아들이는지를 알아보기 위한 것입니다. 참가자마다 조금씩 다른 안내 문구를 보셨습니다.</p>
+    <p class="fine">문의 · 국민대학교 비즈니스IT전문대학원 박사과정 이승현 (${CONFIG.RESEARCH_EMAIL})</p>
+    ${REVIEW?`<hr class="rule"><h2>검토용 응답 자료</h2>
+      <p class="fine">이 영역은 검토 모드에서만 표시됩니다.</p>
+      <div class="actions"><button class="ghost" id="dl">응답 파일 내려받기</button></div>`:""}`);
+  const dl=document.getElementById("dl");
+  if(dl) dl.addEventListener("click",()=>{ const a=document.createElement("a");
+    a.href=URL.createObjectURL(new Blob([window.__payload],{type:"application/json"}));
+    a.download=`barocall_${COND.agent}_${COND.basis}_${Date.now()}.json`; a.click(); });
+}
+
+/* ═══ 검토 모드 ═══ */
 if(REVIEW){
   document.body.classList.add("review");
-  const box = document.createElement("div");
-  box.id = "review";
-  box.innerHTML = `
-    <b>검토 모드</b>
-    <select id="rvAgent">
-      <option value="ai">주체: AI 알고리즘</option>
-      <option value="human">주체: 요금정책 담당자</option>
-    </select>
-    <select id="rvBasis">
-      <option value="market">근거: 실시간 시장 수요</option>
-      <option value="data">근거: 개인 이용 데이터</option>
-    </select>
-    <button id="rvGo">이 조건으로 다시 보기</button>`;
-  box.hidden = true;
-  const toggle = document.createElement("button");
-  toggle.id = "rvToggle"; toggle.type = "button"; toggle.textContent = "조건 전환";
-  toggle.setAttribute("aria-expanded","false");
-  toggle.addEventListener("click", ()=>{
-    box.hidden = !box.hidden;
-    toggle.setAttribute("aria-expanded", String(!box.hidden));
-    toggle.textContent = box.hidden ? "조건 전환" : "닫기";
-  });
-  document.body.append(box, toggle);
-  document.getElementById("rvAgent").value = COND.agent;
-  document.getElementById("rvBasis").value = COND.basis;
-  document.getElementById("rvGo").addEventListener("click", ()=>{
-    const a = document.getElementById("rvAgent").value;
-    const b = document.getElementById("rvBasis").value;
-    location.search = `?review=1&agent=${a}&basis=${b}`;
-  });
+  const box=document.createElement("div"); box.id="review"; box.hidden=true;
+  box.innerHTML=`<b>검토 모드</b>
+    <select id="rvA"><option value="ai">주체: AI 알고리즘</option><option value="human">주체: 요금정책 담당자</option></select>
+    <select id="rvB"><option value="market">근거: 실시간 시장 수요</option><option value="data">근거: 개인 이용 데이터</option></select>
+    <button id="rvGo" type="button">이 조건으로 다시 보기</button>`;
+  const tg=document.createElement("button");
+  tg.id="rvToggle"; tg.type="button"; tg.textContent="조건 전환";
+  tg.addEventListener("click",()=>{ box.hidden=!box.hidden; tg.textContent=box.hidden?"조건 전환":"닫기"; });
+  document.body.append(box,tg);
+  document.getElementById("rvA").value=COND.agent;
+  document.getElementById("rvB").value=COND.basis;
+  document.getElementById("rvGo").addEventListener("click",()=>{
+    location.search=`?review=1&agent=${document.getElementById("rvA").value}&basis=${document.getElementById("rvB").value}`; });
 }
 
-/* 실수로 새로고침하는 것 방지 */
-window.onbeforeunload = () => "";
-
+window.onbeforeunload=()=>"";
 draw();
 </script>
 </body>
