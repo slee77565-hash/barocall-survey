@@ -174,10 +174,32 @@ const BASES = { market:{phrase:"현재 지역의 호출 수요와 배차 가능 
 const params = new URLSearchParams(location.search);
 const REVIEW = params.get("review")==="1";
 const pick = a => a[Math.floor(Math.random()*a.length)];
-const COND = {
-  agent: AGENTS[params.get("agent")] ? params.get("agent") : pick(["ai","human"]),
-  basis: BASES[params.get("basis")] ? params.get("basis") : pick(["market","data"])
-};
+// 새로고침해도 조건이 바뀌지 않도록 세션에 고정합니다.
+function fixedCond(){
+  const fromUrl = { agent: params.get("agent"), basis: params.get("basis") };
+  if(AGENTS[fromUrl.agent] && BASES[fromUrl.basis]) return fromUrl;
+  try{
+    const saved = JSON.parse(sessionStorage.getItem("barocall_cond") || "null");
+    if(saved && AGENTS[saved.agent] && BASES[saved.basis]) return saved;
+  }catch(e){}
+  const made = { agent: pick(["ai","human"]), basis: pick(["market","data"]) };
+  try{ sessionStorage.setItem("barocall_cond", JSON.stringify(made)); }catch(e){}
+  return made;
+}
+const COND = fixedCond();
+
+// 중복·오류 응답을 가려낼 수 있도록 응답마다 고유 번호를 붙입니다.
+function makeId(){
+  try{ if(crypto && crypto.randomUUID) return crypto.randomUUID(); }catch(e){}
+  return "r-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2,10);
+}
+function sessionId(){
+  try{
+    let v = sessionStorage.getItem("barocall_rid");
+    if(!v){ v = makeId(); sessionStorage.setItem("barocall_rid", v); }
+    return v;
+  }catch(e){ return makeId(); }
+}
 const A = () => AGENTS[COND.agent], B = () => BASES[COND.basis];
 function josa(w,a,b){ const c=w.charCodeAt(w.length-1);
   const has=(c>=0xAC00&&c<=0xD7A3)?((c-0xAC00)%28!==0):true; return has?a:b; }
@@ -194,36 +216,39 @@ const G = {
       lk("PF3","바로콜이 이 호출 이용료를 정한 절차는 적절하다.")],
   AC:[lk("AC1","나는 이 호출 이용료를 지불하고 우선배차로 택시를 부를 의향이 있다."),
       lk("AC2","이 조건이라면 나는 호출하기 버튼을 누를 가능성이 높다."),
-      lk("AC3","나는 이 호출 이용료를 지불할 만하다고 생각한다.")],
-  SI:[lk("SI1","이 요금을 결정할 때 자기 이익을 우선하려는 의도가 있었다."),
-      lk("SI2","이 요금을 결정할 때 욕심을 부렸다."),
-      lk("SI3","이 요금 결정에는 나쁜 의도가 있었다.")],
+      lk("AC3","다음에도 이런 조건이라면 우선배차를 이용할 생각이 있다.")],
+  SI:[lk("SI1","이 요금 결정에는 이기적인 의도가 있었다."),
+      lk("SI2","이 요금 결정에는 탐욕적인 의도가 있었다."),
+      lk("SI3","이 요금 결정에는 좋지 않은 의도가 있었다.")],
   JD:[lk("JD1","이 요금을 결정한 @A@에게 평가받고 있다는 느낌이 들었다."),
-      lk("JD2","이 요금에는 @A@이 나에 대해 내린 판단이 반영된 것처럼 느껴졌다."),
-      lk("JD3","@A@이 나를 살펴보고 이 요금을 정했다는 느낌이 들었다.")],
-  UN:[lk("UN1","이 요금을 정할 때 나의 개별적인 사정이 충분히 고려되지 않았다."),
-      lk("UN2","이 요금 결정은 나의 구체적인 상황을 충분히 반영하지 못했다."),
-      lk("UN3","이 요금을 결정한 @A@은 나에게만 해당되는 사정을 충분히 고려하지 못했다.")],
+      lk("JD2","이 요금에는 @A_SUBJ@ 나에 대해 내린 판단이 반영된 것처럼 느껴졌다."),
+      lk("JD3","이 요금은 @A_SUBJ@ 나를 평가한 결과처럼 느껴졌다.")],
+  UN:[lk("UN1","이 요금을 결정한 @A_TOP@ 나의 개별적인 사정을 충분히 고려하지 못했다."),
+      lk("UN2","이 요금을 결정한 @A_TOP@ 나의 구체적인 상황을 충분히 반영하지 못했다."),
+      lk("UN3","이 요금을 결정한 @A_TOP@ 나에게만 해당되는 사정을 충분히 고려하지 못했다.")],
   EX:[lk("EX1","이 요금 결정은 나에게서 더 많은 이익을 얻어내려는 것으로 느껴진다."),
-      lk("EX2","이 요금 결정은 이용자를 이용하려는 성격이 있다고 느껴진다."),
-      lk("EX3","이 요금 결정은 이용자에게 불리하게 설계되어 있다고 느껴진다.")],
+      lk("EX2","이 요금 결정은 소비자의 사정을 이용하려는 것으로 느껴진다."),
+      lk("EX3","이 요금 결정에서 나는 이용당하고 있다는 느낌을 받았다.")],
   PR:[lk("PR1","바로콜이 나에 관한 정보를 어떻게 수집하고 있는지 걱정된다."),
       lk("PR2","바로콜이 내 정보를 어떤 목적으로 사용하는지 우려된다."),
-      lk("PR3","내 정보가 어떻게 활용되는지 내가 통제하기 어렵다고 느낀다.")],
-  SR:[lk("SR1","이 요금은 나의 개인적인 특성이나 행동을 반영하여 정해진 것처럼 느껴졌다."),
+      lk("PR3","내 정보가 내가 원하지 않는 방식으로 활용될까 걱정된다.")],
+  SR:[lk("SR1","이 요금은 나의 이용 행동이나 이용 기록을 반영하여 정해진 것처럼 느껴졌다."),
       lk("SR2","이 요금은 나에 관한 정보에 근거해 정해진 것으로 보인다."),
       lk("SR3","이 요금은 나와는 무관한 외부 상황 때문에 정해진 것으로 보인다.")],
   RE:[lk("RE1","앞에서 읽은 상황은 실제로 일어날 법하다."),
-      lk("RE2","앞에서 읽은 상황은 현실적이다."),
-      lk("RE3","앞에서 읽은 상황에 몰입할 수 있었다.")],
-  AN:[lk("AN1","이 요금을 결정한 @A@은 사람과 비슷한 면이 있다."),
-      lk("AN2","이 요금을 결정한 @A@은 스스로 생각하는 것처럼 느껴진다.")],
+      lk("RE2","앞에서 읽은 상황은 현실적이다.")],
+  IM:[lk("IM1","앞에서 읽은 상황에 몰입할 수 있었다.")],
+  RL:[lk("RL1","제시된 정보는 호출 이용료를 결정하는 근거로 관련성이 있다고 느꼈다."),
+      lk("RL2","제시된 정보는 호출 이용료 산정에 활용할 만한 정보라고 느꼈다.")],
+  AN:[lk("AN1","이 요금을 결정한 @A_TOP@ 사람과 비슷한 면이 있다."),
+      lk("AN2","이 요금을 결정한 @A_TOP@ 스스로 생각하는 것처럼 느껴진다.")],
   GP:[lk("GP1","평소 온라인 서비스가 내 개인정보를 수집하는 것에 대해 걱정하는 편이다."),
-      lk("GP2","앱을 설치할 때 개인정보 관련 항목을 꼼꼼히 확인하는 편이다."),
+      lk("GP2","온라인에서 내 활동 기록이 수집되는 것이 불편하게 느껴지는 편이다."),
       lk("GP3","기업이 내 정보를 어떻게 사용하는지에 대해 민감한 편이다.")]
 };
 
-const R = { meta:{ startedAt:new Date().toISOString(), agent:COND.agent, basis:COND.basis,
+const R = { meta:{ responseId:sessionId(), pid:(params.get("pid")||""),
+                   startedAt:new Date().toISOString(), agent:COND.agent, basis:COND.basis,
                    ua:navigator.userAgent, review:REVIEW }, answers:{}, timing:{} };
 let step = 0, enteredAt = Date.now();
 const shuffle = a => { const b=a.slice(); for(let i=b.length-1;i>0;i--){const j=(Math.random()*(i+1))|0; [b[i],b[j]]=[b[j],b[i]];} return b; };
@@ -240,7 +265,13 @@ function one(code,text,lo,hi){
     <div class="scale" role="radiogroup" aria-label="${text}">${cells}</div>
     <div class="anchors"><span>1. ${lo}</span><span>7. ${hi}</span></div></div>`;
 }
-const pipe = t => t.replace(/@A@/g, A().label);
+const pipe = t => {
+  const w = A().label;
+  return t.replace(/@A_SUBJ@/g, w + josa(w,"이","가"))
+          .replace(/@A_TOP@/g,  w + josa(w,"은","는"))
+          .replace(/@A_OBJ@/g,  w + josa(w,"을","를"))
+          .replace(/@A@/g,      w);
+};
 const items = list => list.map(it=>one(it.code,pipe(it.text))).join("");
 function choices(code,text,opts){
   const NUM=["①","②","③","④","⑤"], cur=R.answers[code];
@@ -298,7 +329,7 @@ P.push({ id:"B1", eyebrow:"참여 자격", title:"먼저 두 가지만 여쭙겠
 
 P.push({ id:"B2", eyebrow:"이용 실태", title:"평소 이용 습관을 여쭙겠습니다", back:true, render:()=>
   choices("U1","최근 6개월 동안 택시 호출 앱을 얼마나 자주 이용하셨습니까?",
-    [["1","거의 이용하지 않음"],["2","월 1회 미만"],["3","월 1~3회"],["4","주 1~2회"],["5","주 3회 이상"]])
+    [["1","6개월간 1회"],["2","6개월간 2~5회"],["3","월 1~3회"],["4","주 1~2회"],["5","주 3회 이상"]])
   + choices("U2","택시 호출 앱에서 빠른 배차를 위해 추가 이용료를 지불해 본 경험이 있습니까?",
     [["yes","있다"],["no","없다"],["dk","잘 모르겠다"]]) });
 
@@ -327,8 +358,7 @@ P.push({ id:"B4", eyebrow:"요금에 대한 생각", title:"앞에서 보신 호
 
 P.push({ id:"B5", eyebrow:"이용 의향", title:"이 조건에서 우선배차를 이용하시겠습니까?", back:true,
   render:()=> items(shuffle(G.AC))
-    + choices("CH1","이 호출 이용료로 우선배차를 이용하시겠습니까?",[["yes","이용한다"],["no","이용하지 않는다"]])
-    + items([lk("ALT1","이 상황이라면 우선배차 대신 일반 호출을 이용할 것이다.")]) });
+    + choices("CH1","이 호출 이용료로 우선배차를 이용하시겠습니까?",[["yes","이용한다"],["no","이용하지 않는다"]]) });
 
 MED.forEach((k,i)=> P.push({ id:"B6_"+k, eyebrow:`느낌 ${i+1} / 3`, title:"앞의 상황을 떠올리며 응답해 주세요", back:true,
   render:()=> (k==="SI" ? `<p class="lead">이 호출 이용료를 결정한 <strong>${A().label}</strong>에 대해 어떻게 생각하시는지 응답해 주세요.</p>` : "")
@@ -346,9 +376,11 @@ P.push({ id:"B8a", eyebrow:"내용 확인", title:"앞에서 보신 화면을 �
   + one("MC3","오늘 제시된 호출 이용료는 평소 지불하던 이용료와 비교해 어떻습니까?","훨씬 유리하다","훨씬 불리하다") });
 
 P.push({ id:"B8b", eyebrow:"내용 확인", title:"이 요금에 대해 어떻게 느끼셨습니까?", back:true, render(){
-  let h = items(G.SR) + `<h2>상황에 대한 느낌</h2>` + items(G.RE);
+  let h = items(G.SR)
+        + `<h2>제시된 정보에 대해</h2>` + items(G.RL)
+        + `<h2>상황에 대한 느낌</h2>` + items(G.RE) + items(G.IM);
   if(COND.agent==="ai") h += `<h2>요금을 결정한 주체에 대해</h2>` + items(G.AN);
-  h += `<h2>확인 문항</h2>` + one("AT1","이 문항에는 정답이 없습니다. 아래 보기 중 4번을 선택해 주십시오.");
+  h += `<h2>확인 문항</h2>` + one("AT1","응답에 주의를 기울이고 계신지 확인하기 위한 문항입니다. 아래 보기 중 4번을 선택해 주십시오.");
   return h; }});
 
 P.push({ id:"B7b", eyebrow:"정보 활용에 대해", title:"바로콜의 정보 활용에 대해 어떻게 느끼십니까?", back:true,
@@ -379,9 +411,12 @@ if(CONFIG.FEEDBACK){
     <div class="q"><div class="stem"><div class="code">F4</div><div class="text">의미가 모호하거나 이해하기 어려웠던 문항이 있었다면 자유롭게 적어 주세요.</div></div>
       <textarea id="in_F4" placeholder="없으면 비워 두셔도 됩니다">${R.answers.F4||""}</textarea></div>
     <div class="q"><div class="stem"><div class="code">F5</div><div class="text">이 설문이 무엇을 알아보려 한다고 생각하셨습니까?</div></div>
-      <textarea id="in_F5" placeholder="떠오르는 대로 적어 주세요">${R.answers.F5||""}</textarea></div>`,
+      <textarea id="in_F5" placeholder="떠오르는 대로 적어 주세요">${R.answers.F5||""}</textarea></div>
+    <div class="q"><div class="stem"><div class="code">F6</div><div class="text">연구자가 어떤 조건에서 더 긍정적이거나 부정적인 응답이 나오기를 기대한다고 느끼셨습니까?</div></div>
+      <textarea id="in_F6" placeholder="특별히 느낀 점이 없으면 비워 두셔도 됩니다">${R.answers.F6||""}</textarea></div>`,
     validate(){ R.answers.F4=document.getElementById("in_F4").value.trim();
-      R.answers.F5=document.getElementById("in_F5").value.trim(); return null; } });
+      R.answers.F5=document.getElementById("in_F5").value.trim();
+      R.answers.F6=document.getElementById("in_F6").value.trim(); return null; } });
 }
 
 /* ═══ 진행 ═══ */
@@ -470,9 +505,12 @@ function submit(){
     <p class="lead" style="font-weight:700">응답을 제출하고 있습니다</p>
     <p class="fine">완료될 때까지 이 창을 닫지 말아 주세요.</p></div>`);
   const payload=JSON.stringify(R);
-  if(REVIEW) window.__payload=payload;
   const finish=()=>setTimeout(thanks,900);
-  if(CONFIG.ENDPOINT){
+  if(REVIEW){
+    // 검토 모드 응답은 실제 자료에 섞이지 않도록 전송하지 않습니다.
+    window.__payload=payload;
+    finish();
+  } else if(CONFIG.ENDPOINT){
     fetch(CONFIG.ENDPOINT,{method:"POST",mode:"no-cors",
       headers:{"Content-Type":"text/plain;charset=utf-8"},body:payload}).then(finish).catch(finish);
   } else finish();
@@ -488,7 +526,7 @@ function thanks(){
     <p>이 연구는 요금이 인상되었다는 안내를 받았을 때, 그 요금을 <strong>누가</strong> 정했는지와 <strong>무엇을 바탕으로</strong> 정했는지에 따라 이용자가 요금을 어떻게 받아들이는지를 알아보기 위한 것입니다. 참가자마다 조금씩 다른 안내 문구를 보셨습니다.</p>
     <p class="fine">문의 · 국민대학교 비즈니스IT전문대학원 박사과정 이승현 (${CONFIG.RESEARCH_EMAIL})</p>
     ${REVIEW?`<hr class="rule"><h2>검토용 응답 자료</h2>
-      <p class="fine">이 영역은 검토 모드에서만 표시됩니다.</p>
+      <p class="fine">이 영역은 검토 모드에서만 표시됩니다. <strong>검토 모드의 응답은 실제 자료로 전송되지 않습니다.</strong></p>
       <div class="actions"><button class="ghost" id="dl">응답 파일 내려받기</button></div>`:""}`);
   const dl=document.getElementById("dl");
   if(dl) dl.addEventListener("click",()=>{ const a=document.createElement("a");
