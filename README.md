@@ -14,43 +14,43 @@ Google 드라이브에서 새 스프레드시트를 만듭니다. 이름은 자�
 상단 메뉴에서 확장 프로그램 → Apps Script를 엽니다.
 편집기에 있던 내용을 모두 지우고 아래 코드를 붙여넣습니다.
 ```javascript
-const NOTIFY_EMAIL = 'b831028@naver.com';  // 응답 알림을 받을 주소
-const NOTIFY_EVERY = 1;                    // 1이면 매 응답마다 메일, 10이면 10건마다
+const NOTIFY\_EMAIL = 'b831028@naver.com';  // 응답 알림을 받을 주소
+const NOTIFY\_EVERY = 1;                    // 1이면 매 응답마다 메일, 10이면 10건마다
 
 function doPost(e) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()\[0];
   const d = JSON.parse(e.postData.contents);
   const a = d.answers, m = d.meta;
 
   const keys = Object.keys(a);
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(
-      ['제출시각', '주체', '근거', '매개제시순서', '다시보기', '소요초', '시나리오체류ms']
+      \['제출시각', '주체', '근거', '매개제시순서', '다시보기', '소요초', '시나리오체류ms']
         .concat(keys)
     );
   }
   sheet.appendRow(
-    [m.finishedAt, m.agent, m.basis, (m.mediatorOrder || []).join('-'),
+    \[m.finishedAt, m.agent, m.basis, (m.mediatorOrder || \[]).join('-'),
      m.replays || 0, m.durationSec, (d.timing || {}).B3 || '']
-      .concat(keys.map(k => a[k]))
+      .concat(keys.map(k => a\[k]))
   );
 
   const n = sheet.getLastRow() - 1;
-  if (NOTIFY_EMAIL && n % NOTIFY_EVERY === 0) {
+  if (NOTIFY\_EMAIL \&\& n % NOTIFY\_EVERY === 0) {
     MailApp.sendEmail(
-      NOTIFY_EMAIL,
-      '[설문] 응답 ' + n + '건 도착 (' + m.agent + ' / ' + m.basis + ')',
-      '새 응답이 도착했습니다.\n\n' +
-      '조건: ' + m.agent + ' / ' + m.basis + '\n' +
-      '소요 시간: ' + m.durationSec + '초\n' +
-      '누적 응답: ' + n + '건\n\n' +
+      NOTIFY\_EMAIL,
+      '\[설문] 응답 ' + n + '건 도착 (' + m.agent + ' / ' + m.basis + ')',
+      '새 응답이 도착했습니다.\\n\\n' +
+      '조건: ' + m.agent + ' / ' + m.basis + '\\n' +
+      '소요 시간: ' + m.durationSec + '초\\n' +
+      '누적 응답: ' + n + '건\\n\\n' +
       '전체 자료 보기: ' + SpreadsheetApp.getActiveSpreadsheet().getUrl()
     );
   }
   return ContentService.createTextOutput('ok');
 }
 ```
-`NOTIFY_EMAIL`이 본인 주소인지 확인합니다. 응답이 많아져 메일이 번거로우면 `NOTIFY_EVERY`를 10이나 20으로 바꾸세요.
+`NOTIFY\_EMAIL`이 본인 주소인지 확인합니다. 응답이 많아져 메일이 번거로우면 `NOTIFY\_EVERY`를 10이나 20으로 바꾸세요.
 2-2. 웹앱으로 배포하기
 편집기 오른쪽 위 배포 → 새 배포를 누릅니다.
 톱니바퀴에서 웹 앱을 선택합니다.
@@ -63,7 +63,7 @@ function doPost(e) {
 ```js
 const CONFIG = {
   ENDPOINT: "https://script.google.com/macros/s/......../exec",
-  RESEARCH_EMAIL: "b831028@naver.com",
+  RESEARCH\_EMAIL: "b831028@naver.com",
   FEEDBACK: true,
   ...
 };
@@ -77,7 +77,7 @@ GitHub에서 `index.html`을 열고 연필 아이콘으로 수정한 뒤 Commit 
 참가자용	`https://slee77565-hash.github.io/barocall-survey/`
 동료 검토용	`https://slee77565-hash.github.io/barocall-survey/?review=1`
 검토 모드에서는 문항 코드가 표시되고, 우측 하단 조건 전환 버튼으로 네 조건을 바로 비교할 수 있습니다.
-특정 조건만 보려면 `?agent=ai&basis=data` 처럼 붙이면 됩니다. `agent`는 `ai` 또는 `human`, `basis`는 `market` 또는 `data`입니다.
+특정 조건만 보려면 `?agent=ai\&basis=data` 처럼 붙이면 됩니다. `agent`는 `ai` 또는 `human`, `basis`는 `market` 또는 `data`입니다.
 ---
 4. 설계에 반영된 원칙
 표지: 연구자와 지도교수, 소요 시간, 익명 처리, 문의처를 밝히고 동의에 체크해야 시작 버튼이 열립니다.
