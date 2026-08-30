@@ -208,30 +208,40 @@ const noticeText = () => { const who=A().label, what=B().phrase;
 
 const lk = (code,text) => ({code,text});
 const G = {
-  DF:[lk("DF1","오늘 제시된 호출 이용료는 공정하다."),
-      lk("DF2","오늘 제시된 호출 이용료는 합리적이다."),
-      lk("DF3","오늘 제시된 호출 이용료는 적정하다.")],
-  PF:[lk("PF1","이 호출 이용료가 정해진 과정은 공정하다."),
-      lk("PF2","이 호출 이용료를 정한 방식은 타당하다."),
-      lk("PF3","바로콜이 이 호출 이용료를 정한 절차는 적절하다.")],
+  DF:[lk("DF1","이 호출 이용료는 공정하다."),
+      lk("DF2","이 호출 이용료는 미심쩍다."),
+      lk("DF3","이 호출 이용료는 정당하다."),
+      lk("DF4","이 호출 이용료는 정직하다."),
+      lk("DF5","이 호출 이용료는 부당하다."),
+      lk("DF6","이 호출 이용료는 바가지에 가깝다.")],
+  PF:[lk("PF1","이 이용료를 정한 방식은 공정하다."),
+      lk("PF2","이 이용료를 정한 방식은 미심쩍다."),
+      lk("PF3","이 이용료를 정한 방식은 정당하다."),
+      lk("PF4","이 이용료를 정한 방식은 정직하다."),
+      lk("PF5","이 이용료를 정한 방식은 부당하다."),
+      lk("PF6","이 이용료를 정한 방식은 바가지를 씌우는 것에 가깝다.")],
   AC:[lk("AC1","나는 이 호출 이용료를 지불하고 우선배차로 택시를 부를 의향이 있다."),
       lk("AC2","이 조건이라면 나는 호출하기 버튼을 누를 가능성이 높다."),
       lk("AC3","다음에도 이런 조건이라면 우선배차를 이용할 생각이 있다.")],
   SI:[lk("SI1","이 요금 결정에는 이기적인 의도가 있었다."),
       lk("SI2","이 요금 결정에는 탐욕적인 의도가 있었다."),
-      lk("SI3","이 요금 결정에는 좋지 않은 의도가 있었다.")],
-  JD:[lk("JD1","이 요금을 결정한 @A@에게 평가받고 있다는 느낌이 들었다."),
-      lk("JD2","이 요금에는 @A_SUBJ@ 나에 대해 내린 판단이 반영된 것처럼 느껴졌다."),
-      lk("JD3","이 요금은 @A_SUBJ@ 나를 평가한 결과처럼 느껴졌다.")],
+      lk("SI3","이 요금 결정에는 좋지 않은 의도가 있었다.")],  // 보조 측정
+  JD:[lk("JD1","@A@의 결정은 내가 평가받는다는 느낌이 들게 한다."),
+      lk("JD2","@A@의 결정은 나에 대해 어떤 판단을 내리고 있음을 보여준다."),
+      lk("JD3","나는 요금이 정해지는 과정에서 @A@에게 평가받는 것이 불편하지 않다.")],
   UN:[lk("UN1","이 요금을 결정한 @A_TOP@ 나의 개별적인 사정을 충분히 고려하지 못했다."),
       lk("UN2","이 요금을 결정한 @A_TOP@ 나의 구체적인 상황을 충분히 반영하지 못했다."),
       lk("UN3","이 요금을 결정한 @A_TOP@ 나에게만 해당되는 사정을 충분히 고려하지 못했다.")],
-  EX:[lk("EX1","이 요금 결정은 나에게서 더 많은 이익을 얻어내려는 것으로 느껴진다."),
-      lk("EX2","이 요금 결정은 소비자의 사정을 이용하려는 것으로 느껴진다."),
-      lk("EX3","이 요금 결정에서 나는 이용당하고 있다는 느낌을 받았다.")],
-  PR:[lk("PR1","바로콜이 나에 관한 정보를 어떻게 수집하고 있는지 걱정된다."),
-      lk("PR2","바로콜이 내 정보를 어떤 목적으로 사용하는지 우려된다."),
-      lk("PR3","내 정보가 내가 원하지 않는 방식으로 활용될까 걱정된다.")],
+  EX:[lk("EX1","나는 @A@의 요금 산정 과정에서 착취당한다고 느낀다."),
+      lk("EX2","@A@의 요금 산정 방식은 내가 이용당하고 있다는 느낌이 들게 한다."),
+      lk("EX3","나는 요금이 정해지는 과정에서 @A@에게 이용당했다고 느낀다.")],
+  JU:[lk("JU1","@A_SUBJ@ 이렇게 결정한 데에는 나름의 이유가 있었을 것이다."),
+      lk("JU2","@A@의 결정에는 분명한 설명이 가능하다."),
+      lk("JU3","@A@의 결정은 경제적으로 타당하다."),
+      lk("JU4","@A@의 결정은 합리적이다.")],
+  PR:[lk("PR1","@A@의 결정은 내 프라이버시를 걱정하게 만든다."),
+      lk("PR2","@A@의 요금 산정 과정은 나의 개인적 영역을 침해한다."),
+      lk("PR3","나는 @A_GA@ 요금 산정에 내 정보를 사용하는 것이 불편하지 않다.")],
   SR:[lk("SR1","이 요금은 나의 이용 행동이나 이용 기록을 반영하여 정해진 것처럼 느껴졌다."),
       lk("SR2","이 요금은 나에 관한 정보에 근거해 정해진 것으로 보인다."),
       lk("SR3","이 요금은 나와는 무관한 외부 상황 때문에 정해진 것으로 보인다.")],
@@ -252,8 +262,12 @@ const R = { meta:{ responseId:sessionId(), pid:(params.get("pid")||""),
                    ua:navigator.userAgent, review:REVIEW }, answers:{}, timing:{} };
 let step = 0, enteredAt = Date.now();
 const shuffle = a => { const b=a.slice(); for(let i=b.length-1;i>0;i--){const j=(Math.random()*(i+1))|0; [b[i],b[j]]=[b[j],b[i]];} return b; };
-const MED = shuffle(["SI","JD","UN"]);
+const MED = shuffle(["JD","EX","JU","UN"]);
 R.meta.mediatorOrder = MED;
+// 문항 순서는 시작할 때 한 번만 정합니다. 이전 화면으로 돌아가도 순서가 바뀌지 않습니다.
+const ORD = {};
+["AC","SI","JD","EX","JU","UN","PR","GP"].forEach(k=>{ ORD[k]=shuffle(G[k]); });
+R.meta.itemOrder = Object.fromEntries(Object.entries(ORD).map(([k,v])=>[k,v.map(i=>i.code)]));
 
 /* ═══ 렌더 도우미 ═══ */
 function one(code,text,lo,hi){
@@ -270,13 +284,14 @@ const pipe = t => {
   return t.replace(/@A_SUBJ@/g, w + josa(w,"이","가"))
           .replace(/@A_TOP@/g,  w + josa(w,"은","는"))
           .replace(/@A_OBJ@/g,  w + josa(w,"을","를"))
+          .replace(/@A_GA@/g,   w + josa(w,"이","가"))
           .replace(/@A@/g,      w);
 };
 const items = list => list.map(it=>one(it.code,pipe(it.text))).join("");
 function choices(code,text,opts){
   const NUM=["①","②","③","④","⑤"], cur=R.answers[code];
   const rows=opts.map(([v,l],i)=>`<label data-code="${code}" data-val="${v}">
-    <input type="radio" name="${code}" value="${v}"${cur===v?" checked":""}><span>${NUM[i]||""} ${l}</span></label>`).join("");
+    <input type="radio" name="${code}" value="${v}"${cur!==undefined&&String(cur)===String(v)?" checked":""}><span>${NUM[i]||""} ${l}</span></label>`).join("");
   return `<div class="q" data-req="${code}"><div class="stem"><div class="code">${code}</div><div class="text">${text}</div></div>
     <div class="choices">${rows}</div></div>`;
 }
@@ -300,7 +315,7 @@ P.push({ id:"COVER", bare:true, cta:"설문 시작하기",
   <p class="lead">안녕하세요. 바쁘신 중에 시간을 내어 주셔서 감사합니다.</p>
   <p>본 설문은 택시 호출 앱에서 요금 안내를 받았을 때 이용자가 그 요금을 어떻게 받아들이는지를 알아보기 위한 학술 연구입니다.</p>
   <ul class="factlist">
-    <li><b>소요 시간</b><i>약 7~8분</i></li>
+    <li><b>소요 시간</b><i>약 8~10분</i></li>
     <li><b>구성</b><i>짧은 상황 안내를 확인하신 뒤 문항에 응답하시면 됩니다</i></li>
     <li><b>응답 처리</b><i>통계적으로만 처리되며, 개인을 식별할 수 있는 정보는 수집하지 않습니다</i></li>
     <li><b>안내</b><i>정답이나 오답이 없습니다. 떠오르는 대로 응답해 주세요</i></li>
@@ -354,20 +369,20 @@ P.push({ id:"B3", eyebrow:"상황 안내", title:"다음 상황을 실제로 겪
   <div class="player"><div class="pline"><i id="pl"></i></div><div class="ptext" id="pt">보여 드리는 중</div></div>` });
 
 P.push({ id:"B4", eyebrow:"요금에 대한 생각", title:"앞에서 보신 호출 이용료에 대해 어떻게 느끼셨습니까?",
-  render:()=> items(G.DF) + `<h2>요금이 정해진 과정에 대해</h2>` + items(G.PF) });
+  render:()=> items(G.DF) + `<h2>이용료가 정해진 방식에 대해</h2>` + items(G.PF) });
 
 P.push({ id:"B5", eyebrow:"이용 의향", title:"이 조건에서 우선배차를 이용하시겠습니까?", back:true,
-  render:()=> items(shuffle(G.AC))
+  render:()=> items(ORD.AC)
     + choices("CH1","이 호출 이용료로 우선배차를 이용하시겠습니까?",[["yes","이용한다"],["no","이용하지 않는다"]]) });
 
-MED.forEach((k,i)=> P.push({ id:"B6_"+k, eyebrow:`느낌 ${i+1} / 3`, title:"앞의 상황을 떠올리며 응답해 주세요", back:true,
-  render:()=> (k==="SI" ? `<p class="lead">이 호출 이용료를 결정한 <strong>${A().label}</strong>에 대해 어떻게 생각하시는지 응답해 주세요.</p>` : "")
-    + items(shuffle(G[k])) }));
+MED.forEach((k,i)=> P.push({ id:"B6_"+k, eyebrow:`느낌 ${i+1} / 4`, title:"앞의 상황을 떠올리며 응답해 주세요", back:true,
+  render:()=> `<p class="lead">이 호출 이용료를 결정한 <strong>${A().label}</strong>의 결정에 대해 어떻게 생각하시는지 응답해 주세요.</p>`
+    + items(ORD[k]) }));
 
 P.push({ id:"B7", eyebrow:"추가 질문", title:"몇 가지만 더 여쭙겠습니다", back:true,
-  render:()=> items(shuffle(G.EX)) });
+  render:()=> items(ORD.SI) });
 
-P.push({ id:"B8a", eyebrow:"내용 확인", title:"앞에서 보신 화면을 떠올려 주세요", render:()=>
+P.push({ id:"B8a", eyebrow:"내용 확인", title:"앞에서 보신 화면을 떠올려 주세요", back:true, render:()=>
   choices("MC1","호출 이용료를 결정한 주체는 누구였습니까?",
     [["ai","바로콜 AI 요금 알고리즘"],["human","바로콜 요금정책 담당자"],["dk","기억나지 않는다"]])
   + choices("MC2","호출 이용료는 무엇을 바탕으로 결정되었다고 했습니까?",
@@ -384,10 +399,10 @@ P.push({ id:"B8b", eyebrow:"내용 확인", title:"이 요금에 대해 어떻�
   return h; }});
 
 P.push({ id:"B7b", eyebrow:"정보 활용에 대해", title:"바로콜의 정보 활용에 대해 어떻게 느끼십니까?", back:true,
-  render:()=> items(shuffle(G.PR)) });
+  render:()=> items(ORD.PR) });
 
 P.push({ id:"B9a", eyebrow:"평소 생각", title:"평소 개인정보에 대해 어떻게 생각하십니까?", back:true,
-  render:()=> items(shuffle(G.GP)) });
+  render:()=> items(ORD.GP) });
 
 P.push({ id:"B9b", eyebrow:"응답자 정보", title:"마지막으로 기본 사항을 여쭙겠습니다", back:true, render:()=>`
   ${choices("D1","성별",[["m","남성"],["f","여성"],["na","응답하지 않음"]])}
