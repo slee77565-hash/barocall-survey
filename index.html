@@ -280,7 +280,7 @@ const MED = shuffle(["JD","EX","JU","UN"]);
 R.meta.mediatorOrder = MED;
 // 문항 순서는 시작할 때 한 번만 정합니다. 이전 화면으로 돌아가도 순서가 바뀌지 않습니다.
 const ORD = {};
-["AC","SI","JD","EX","JU","UN","PR","GP"].forEach(k=>{ ORD[k]=shuffle(G[k]); });
+["DF","PF","AC","SI","JD","EX","JU","UN","PR","GP"].forEach(k=>{ ORD[k]=shuffle(G[k]); });
 R.meta.itemOrder = Object.fromEntries(Object.entries(ORD).map(([k,v])=>[k,v.map(i=>i.code)]));
 
 /* ═══ 렌더 도우미 ═══ */
@@ -383,7 +383,10 @@ P.push({ id:"B3", eyebrow:"상황 안내", title:"다음 상황을 실제로 겪
   <div class="player"><div class="pline"><i id="pl"></i></div><div class="ptext" id="pt">보여 드리는 중</div></div>` });
 
 P.push({ id:"B4", eyebrow:"요금에 대한 생각", title:"앞에서 보신 호출 이용료에 대해 어떻게 느끼셨습니까?",
-  recap:true, render:()=> items(G.DF) + `<h2>이용료가 정해진 방식에 대해</h2>` + items(G.PF) });
+  recap:true, render:()=> `<p class="fine">이용료 <strong>금액</strong>에 대한 느낌을 여쭙습니다.</p>` + items(ORD.DF) });
+
+P.push({ id:"B4b", eyebrow:"산정 방식에 대한 생각", title:"이번에는 이용료가 정해진 방식에 대해 여쭙겠습니다", back:true,
+  render:()=> `<p class="fine">앞 화면은 이용료 금액 자체에 대한 것이었습니다. 이 화면은 금액이 아니라 <strong>그 이용료가 정해진 과정과 방식</strong>에 대한 것입니다. 문항이 비슷해 보여도 각각 새로 읽고 답해 주세요.</p>` + items(ORD.PF) });
 
 P.push({ id:"B5", eyebrow:"이용 의향", title:"이 조건에서 우선배차를 이용하시겠습니까?", back:true,
   render:()=> items(ORD.AC)
