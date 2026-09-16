@@ -172,8 +172,8 @@ const CONFIG = {
   FARE_BEFORE: "3,000원"
 };
 
-const AGENTS = { ai:{label:"바로콜 AI 요금 알고리즘"}, human:{label:"바로콜 요금정책 담당자"} };
-const BASES = { market:{phrase:"시스템에 집계된 현재 지역의 호출 수요와 배차 가능 차량 수 데이터"},
+const AGENTS = { ai:{label:"바로콜 AI 요금 알고리즘", verb:"분석한 뒤"}, human:{label:"바로콜 요금정책 담당자", verb:"검토한 뒤"} };
+const BASES = { market:{phrase:"시스템에 집계된 현재 지역의 호출 수요와 배차 가능 차량 수 정보"},
                 data:{phrase:"시스템에 집계된 고객님의 최근 이용 빈도와 이용 시간 데이터"} };
 const params = new URLSearchParams(location.search);
 const REVIEW = params.get("review")==="1";
@@ -207,8 +207,8 @@ function sessionId(){
 const A = () => AGENTS[COND.agent], B = () => BASES[COND.basis];
 function josa(w,a,b){ const c=w.charCodeAt(w.length-1);
   const has=(c>=0xAC00&&c<=0xD7A3)?((c-0xAC00)%28!==0):true; return has?a:b; }
-const noticeText = () => { const who=A().label, what=B().phrase;
-  return `${who}${josa(who,"이","가")} ${what}${josa(what,"을","를")} 바탕으로 호출 이용료를 최종 결정했습니다.`; };
+const noticeText = () => { const who=A().label, what=B().phrase, verb=A().verb;
+  return `${who}${josa(who,"이","가")} ${what}${josa(what,"을","를")} ${verb}, 호출 이용료를 최종 결정했습니다.`; };
 
 // 자극 직후 첫 측정 화면(B4) 상단에만 상황을 한 번 더 보여 주는 요약 카드 (교수님 제안 반영)
 const recapHTML = () => `
