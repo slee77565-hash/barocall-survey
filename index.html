@@ -174,7 +174,7 @@ const CONFIG = {
 
 const AGENTS = { ai:{label:"바로콜 AI 요금 알고리즘", verb:"분석한 뒤"}, human:{label:"바로콜 요금정책 담당자", verb:"검토한 뒤"} };
 const BASES = { market:{phrase:"시스템에 집계된 현재 지역의 호출 수요와 배차 가능 차량 수 정보"},
-                data:{phrase:"시스템에 집계된 고객님의 최근 이용 빈도와 이용 시간 데이터"} };
+                data:{phrase:"시스템에 집계된 고객님의 최근 이용 빈도와 주 이용 시간대 정보"} };
 const params = new URLSearchParams(location.search);
 const REVIEW = params.get("review")==="1";
 const pick = a => a[Math.floor(Math.random()*a.length)];
@@ -404,7 +404,7 @@ P.push({ id:"B8a", eyebrow:"내용 확인", title:"앞에서 보신 화면을 �
     [["ai","바로콜 AI 요금 알고리즘"],["human","바로콜 요금정책 담당자"],["dk","기억나지 않는다"]])
   + choices("MC2","호출 이용료는 무엇을 바탕으로 결정되었다고 했습니까?",
     [["market","현재 지역의 호출 수요와 배차 가능 차량 수"],
-     ["data","나의 최근 이용 빈도와 이용 시간 데이터"],["dk","기억나지 않는다"]])
+     ["data","나의 최근 이용 빈도와 주 이용 시간대"],["dk","기억나지 않는다"]])
   + one("MC3","오늘 제시된 호출 이용료는 평소 지불하던 이용료와 비교해 어떻습니까?","훨씬 유리하다","훨씬 불리하다") });
 
 P.push({ id:"B8b", eyebrow:"내용 확인", title:"이 요금에 대해 어떻게 느끼셨습니까?", back:true, render(){
