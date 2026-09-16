@@ -116,6 +116,10 @@ button.ghost[hidden]{display:none}
 .fareLabel{font-size:.86rem; color:var(--ink-3)}
 .fare{font-size:2rem; font-weight:800; letter-spacing:-0.045em; font-variant-numeric:tabular-nums}
 .prev{margin-top:.25rem; font-size:.84rem; color:var(--ink-3); font-variant-numeric:tabular-nums}
+.recap{margin:.2rem 0 1.4rem; padding:.95rem 1.05rem 1rem; border:1px dashed var(--line-2); border-radius:14px; background:var(--field)}
+.recapHead{font-size:.72rem; font-weight:700; letter-spacing:.06em; color:var(--ink-3); margin-bottom:.45rem}
+.recap .fare.sm{font-size:1.45rem}
+.recap .notice{margin-top:.75rem; padding:.7rem .85rem; font-size:.92rem}
 .notice{margin-top:1.1rem; padding:.9rem 1rem; background:#fffaeb; border:1px solid #f5e3ad;
   border-left:3px solid var(--stim); border-radius:9px; font-size:.93rem; line-height:1.6; color:var(--ink)}
 .callBtn{margin-top:1.1rem; padding:.9rem; text-align:center; font-weight:800; background:var(--stim); color:var(--stim-ink); border-radius:11px}
@@ -169,8 +173,8 @@ const CONFIG = {
 };
 
 const AGENTS = { ai:{label:"바로콜 AI 요금 알고리즘"}, human:{label:"바로콜 요금정책 담당자"} };
-const BASES = { market:{phrase:"현재 지역의 호출 수요와 배차 가능 차량 수"},
-                data:{phrase:"고객님의 최근 이용 빈도와 주 이용 시간대"} };
+const BASES = { market:{phrase:"시스템에 집계된 현재 지역의 호출 수요와 배차 가능 차량 수 데이터"},
+                data:{phrase:"시스템에 집계된 고객님의 최근 이용 빈도와 이용 시간 데이터"} };
 const params = new URLSearchParams(location.search);
 const REVIEW = params.get("review")==="1";
 const pick = a => a[Math.floor(Math.random()*a.length)];
@@ -204,7 +208,17 @@ const A = () => AGENTS[COND.agent], B = () => BASES[COND.basis];
 function josa(w,a,b){ const c=w.charCodeAt(w.length-1);
   const has=(c>=0xAC00&&c<=0xD7A3)?((c-0xAC00)%28!==0):true; return has?a:b; }
 const noticeText = () => { const who=A().label, what=B().phrase;
-  return `${who}${josa(who,"이","가")} ${what}${josa(what,"을","를")} 바탕으로 호출 이용료를 결정했습니다.`; };
+  return `${who}${josa(who,"이","가")} ${what}${josa(what,"을","를")} 바탕으로 호출 이용료를 최종 결정했습니다.`; };
+
+// 자극 직후 첫 측정 화면(B4) 상단에만 상황을 한 번 더 보여 주는 요약 카드 (교수님 제안 반영)
+const recapHTML = () => `
+  <div class="recap">
+    <div class="recapHead">앞에서 보신 화면</div>
+    <div class="fareRow"><div class="fareLabel">호출 이용료</div><div class="fare sm">${CONFIG.FARE_NOW}</div></div>
+    <div class="prev">평소 이용료 ${CONFIG.FARE_BEFORE}</div>
+    <div class="notice">${noticeText()}</div>
+    <p class="fine" style="margin:.7rem 0 0">이 상황을 염두에 두고 응답해 주세요.</p>
+  </div>`;
 
 const lk = (code,text) => ({code,text});
 const G = {
@@ -369,7 +383,7 @@ P.push({ id:"B3", eyebrow:"상황 안내", title:"다음 상황을 실제로 겪
   <div class="player"><div class="pline"><i id="pl"></i></div><div class="ptext" id="pt">보여 드리는 중</div></div>` });
 
 P.push({ id:"B4", eyebrow:"요금에 대한 생각", title:"앞에서 보신 호출 이용료에 대해 어떻게 느끼셨습니까?",
-  render:()=> items(G.DF) + `<h2>이용료가 정해진 방식에 대해</h2>` + items(G.PF) });
+  recap:true, render:()=> items(G.DF) + `<h2>이용료가 정해진 방식에 대해</h2>` + items(G.PF) });
 
 P.push({ id:"B5", eyebrow:"이용 의향", title:"이 조건에서 우선배차를 이용하시겠습니까?", back:true,
   render:()=> items(ORD.AC)
@@ -387,7 +401,7 @@ P.push({ id:"B8a", eyebrow:"내용 확인", title:"앞에서 보신 화면을 �
     [["ai","바로콜 AI 요금 알고리즘"],["human","바로콜 요금정책 담당자"],["dk","기억나지 않는다"]])
   + choices("MC2","호출 이용료는 무엇을 바탕으로 결정되었다고 했습니까?",
     [["market","현재 지역의 호출 수요와 배차 가능 차량 수"],
-     ["data","나의 최근 이용 빈도와 주 이용 시간대"],["dk","기억나지 않는다"]])
+     ["data","나의 최근 이용 빈도와 이용 시간 데이터"],["dk","기억나지 않는다"]])
   + one("MC3","오늘 제시된 호출 이용료는 평소 지불하던 이용료와 비교해 어떻습니까?","훨씬 유리하다","훨씬 불리하다") });
 
 P.push({ id:"B8b", eyebrow:"내용 확인", title:"이 요금에 대해 어떻게 느끼셨습니까?", back:true, render(){
@@ -447,6 +461,7 @@ function draw(){
   backBtn.hidden = !page.back;
   app.innerHTML=`<div class="card">
     ${page.bare?"":`<p class="eyebrow">${page.eyebrow}</p><h1>${page.title}</h1>`}
+    ${page.recap?recapHTML():""}
     ${page.render()}
     <div class="actions">
       <button class="go" id="next"${page.sequence||page.gate?" disabled":""}>${page.last?"제출하기":(page.cta||"다음")}</button>
